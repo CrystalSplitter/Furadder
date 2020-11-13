@@ -1,0 +1,26 @@
+{
+    "description": "Allows easy uploading to Furbooru.com",
+    "manifest_version": 2,
+    "name": "Furadder",
+    "version": "0.1",
+    "icons": {
+        "48": "icons/border-48.png"
+    },
+    "permissions": [
+        "<all_urls>",
+        "tabs"
+    ],
+    "content_scripts": [
+        {"matches": ["*://twitter.com/*"],
+         "js": ["content_scripts/twitter_handler.js"]},
+        {"matches": ["*://furbooru.org/*"],
+         "js": ["content_scripts/furbooru_handler.js"]}
+    ],
+    "browser_action": {
+        "default_icon": "icons/browser_action_icon.png",
+        "default_popup": "popup/furadder.html"
+    },
+    "web_accessible_resources": [
+        "popup/js_src/*"
+    ]
+}

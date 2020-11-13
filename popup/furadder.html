@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8"/>
+</head>
+
+<body>
+  <div id="background-div">
+    <h1 id="primary-title">
+      Furadder
+    </h1>
+    <div id="site-detector-container"></div>
+    <div>
+      <button type="button" id="prev-image-button">
+      &#x2190;
+      </button>
+      Select Image
+      <button type="button" id="next-image-button">
+      &#x2192;
+      </button>
+    </div>
+    <div id="thumb-container"></div>
+    <p id="resolution"></p>
+    <div class="dropdown-container-l1">
+      <p>Tag Preset:</p>
+      <div class="dropdown-container-l2">
+      <select name="preset" id="tag-presets">
+        <option value="fim">Friendship is Magic</option>
+        <option value="pokemon">Pokemon</option>
+        <option value="anthro-oc">Anthro OC</option>
+      </select>
+      </div>
+    </div>
+    <div class="horz-button-container">
+      <button type="button" id="post-first">Post</button>
+    </div>
+    <button type="button" id="reverse-search">Reverse Image Search</button>
+  </div>
+  <script src="js_src/popup_main.js"></script>
+</body>
+</html>
