@@ -10,7 +10,6 @@
     <h1 id="primary-title">
       Furadder
     </h1>
-    <div id="site-detector-container"></div>
     <div>
       <button type="button" id="prev-image-button">
       &#x2190;
@@ -22,20 +21,30 @@
     </div>
     <div id="thumb-container"></div>
     <p id="resolution"></p>
-    <div class="dropdown-container-l1">
-      <p>Tag Preset:</p>
-      <div class="dropdown-container-l2">
-      <select name="preset" id="tag-presets">
-        <option value="fim">Friendship is Magic</option>
-        <option value="pokemon">Pokemon</option>
-        <option value="anthro-oc">Anthro OC</option>
-      </select>
+    <form>
+      <div id="site-info">
+        <div id="site-detector-container"></div>
+        <div id="site-fillable-container">
+          <label>General Fetch
+            <input type="checkbox" id="furbooru-fetch-input" name="furbooru-fetch-input" value="use"/>
+          </label>
+        </div>
       </div>
-    </div>
-    <div class="horz-button-container">
-      <button type="button" id="post-first">Post</button>
-    </div>
-    <button type="button" id="reverse-search">Reverse Image Search</button>
+      <div class="dropdown-container-l1">
+        <p>Tag Preset:</p>
+        <div class="dropdown-container-l2">
+        <select name="preset" id="tag-presets">
+          <option value="fim">Friendship is Magic</option>
+          <option value="pokemon">Pokemon</option>
+          <option value="anthro-oc">Anthro OC</option>
+        </select>
+        </div>
+      </div>
+      <div class="horz-button-container">
+        <button type="button" id="post-first">Post</button>
+      </div>
+      <button type="button" id="reverse-search">Reverse Image Search</button>
+    </form>
   </div>
   <script src="js_src/popup_main.js"></script>
 </body>

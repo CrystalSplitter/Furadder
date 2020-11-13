@@ -10,6 +10,9 @@
         "<all_urls>",
         "tabs"
     ],
+    "background": {
+        "scripts": ["background_scripts/background.js"]
+    },
     "content_scripts": [
         {"matches": ["*://twitter.com/*"],
          "js": ["content_scripts/twitter_handler.js"]},
