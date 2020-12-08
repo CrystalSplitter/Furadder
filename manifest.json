@@ -14,10 +14,14 @@
         "scripts": ["background_scripts/background.js"]
     },
     "content_scripts": [
+        {"matches": ["<all_urls>"],
+         "js": ["content_scripts/shared_utilities.js"]},
         {"matches": ["*://twitter.com/*"],
          "js": ["content_scripts/twitter_handler.js"]},
         {"matches": ["*://furbooru.org/*"],
-         "js": ["content_scripts/furbooru_handler.js"]}
+         "js": ["content_scripts/furbooru_handler.js"]},
+        {"matches": ["*://derpibooru.org/*"],
+         "js": ["content_scripts/derpibooru_handler.js"]}
     ],
     "browser_action": {
         "default_icon": "icons/browser_action_icon.png",

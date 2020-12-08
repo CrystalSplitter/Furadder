@@ -1,6 +1,6 @@
 const SUBMISSION_TAB_TIMEOUT = 1000;
 const MAX_FILL_RETRIES = 5;
-const BOORU_FILL_COMMAND = "furbooruFetch";
+const BOORU_FILL_COMMAND = "contentFurbooruFetch";
 
 /**
  * Wrap a promise call with a timeout.
