@@ -60,7 +60,16 @@ function displayRes(width, height) {
 }
 
 function displayUnknownRes() {
-  RESOLUTION_ELEM.innerHTML = "Resolution unavailable for general fetch";
+  RESOLUTION_ELEM.innerHTML = "???px &#215 ???px";
+}
+
+function updateImageDisplay(imgItem) {
+  displaySelectedImg(imgItem);
+  if (imgItem.lazyLoad || imgItem.width === null || imgItem.height === null) {
+    displayUnknownRes();
+  } else {
+    displayRes(imgItem.width, imgItem.height);
+  }
 }
 
 function clearRes(width, height) {
@@ -96,8 +105,7 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
       }
       const selectedImg =
         promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
-      displaySelectedImg(selectedImg);
-      displayRes(selectedImg.width, selectedImg.height);
+      updateImageDisplay(selectedImg);
     }
   });
   PREV_IMAGE_BUTTON.addEventListener("click", () => {
@@ -111,8 +119,7 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
       }
       const selectedImg =
         promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
-      displaySelectedImg(selectedImg);
-      displayRes(selectedImg.width, selectedImg.height);
+      updateImageDisplay(selectedImg);
     }
   });
 }
@@ -144,7 +151,10 @@ function main() {
       displayURL(curTab.url);
 
       // Extract the tab data and enable buttons.
-      const requestData = { urlStr: curTab.url, fetchType: promiseMetaProp.fetchType };
+      const requestData = {
+        urlStr: curTab.url,
+        fetchType: promiseMetaProp.fetchType,
+      };
       extractData(curTab.id, requestData).then((resp) => {
         const expectedIdx = resp.expectedIdx !== null ? resp.expectedIdx : 0;
         promiseMetaProp.currentImgIdx = expectedIdx;
@@ -155,8 +165,9 @@ function main() {
             message: `expectedIdx ${expectedIdx} greater than num images`,
           });
         }
-
-        postDataProp.tags.push("artist:" + resp.author);
+        if (resp.author != null && resp.author != "") {
+          postDataProp.tags.push("artist:" + resp.author);
+        }
         postDataProp.description = resp.description;
         postDataProp.sourceURLStr = resp.sourceLink;
 
@@ -177,14 +188,17 @@ function main() {
             displayUnknownRes();
           }
           postDataProp.fetchURLStr = selectedImg.fetchSrc;
-          displaySelectedImg(selectedImg);
+          updateImageDisplay(selectedImg);
           return Promise.resolve(selectedImg);
         }
 
         // Clean up if images did not load.
         resetNextPrev(0, 0);
         clearRes();
-        return Promise.reject({isError: true, message: "Failed to load images"});
+        return Promise.reject({
+          isError: true,
+          message: "Failed to load images",
+        });
       });
     })
     .catch(handleError);

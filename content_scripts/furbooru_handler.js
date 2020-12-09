@@ -1,3 +1,5 @@
+"use strict";
+
 (() => {
   const IMAGE_SCRAPER_ID = "image_scraper_url";
 
@@ -57,7 +59,7 @@
   }
 
   function listener(request) {
-    if (request.command === "furbooruFetch") {
+    if (request.command === "contentFurbooruFetch") {
       const success =
         setFetchURL(request.data.fetchURLStr) &&
         setSourceURL(request.data.sourceURLStr) &&

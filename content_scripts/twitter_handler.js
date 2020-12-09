@@ -69,22 +69,34 @@
   }
 
   /**
-   * Return the text content of the tweet.
+   * Return the textual content of the tweet.
    */
   function getDescription() {
     const parentDiv = document.querySelector("article > div > div > div");
-    if (parentDiv) {
-      return parentDiv.lastChild.innerText;
-    } else {
+    if (parentDiv === null) {
       return "";
     }
+    const descriptionContainer = parentDiv.lastChild;
+    if (descriptionContainer === null) {
+      return "";
+    }
+    const description = descriptionContainer.firstChild;
+    if (description === null) {
+      return "";
+    }
+    return description.innerText;
   }
 
   /**
    * Return the twitter handle of the posted tweet.
    */
   function getTwitterHandle() {
-    return document.location.href.split("/")[3];
+    const splits = document.location.href.split("/");
+    if (splits.length >= 4) {
+      return splits[3];
+    }
+    console.error("[FUR] Unable to get twitter handle.");
+    return "";
   }
 
   function listener(request) {
