@@ -8,7 +8,7 @@
 <body>
   <div id="background-div">
     <h1 id="primary-title">
-      Furadder
+      FurAdder
     </h1>
     <div>
       <button type="button" id="prev-image-button">
@@ -26,7 +26,10 @@
         <div id="site-detector-container"></div>
         <div id="site-fillable-container">
           <label>General Fetch
-            <input type="checkbox" id="furbooru-fetch-input" name="furbooru-fetch-input" value="use"/>
+            <input type="checkbox"
+                   id="furbooru-fetch-input"
+                   name="furbooru-fetch-input"
+                   value="use"/>
           </label>
         </div>
       </div>
@@ -46,6 +49,7 @@
       <button type="button" id="reverse-search">Reverse Image Search</button>
     </form>
   </div>
+  <script type="module" src="js_src/tag_presets.js"></script>
   <script type="module" src="js_src/aliasing.js"></script>
   <script type="module" src="js_src/popup_main.js"></script>
 </body>
