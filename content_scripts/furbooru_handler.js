@@ -1,8 +1,11 @@
 "use strict";
 
 (() => {
-  const IMAGE_SCRAPER_ID = "image_scraper_url";
-
+  /**
+   * Set the 'Fetch' field URL entry on the submission page.
+   * @param urlStr The URL string to set.
+   * @returns true if successful.
+   */
   function setFetchURL(urlStr) {
     const elem = document.getElementById("image_scraper_url");
     if (elem) {
@@ -13,6 +16,10 @@
     return false;
   }
 
+  /**
+   * Set the source string on the submission page.
+   * @param urlStr The source string to set.
+   */
   function setSourceURL(urlStr) {
     const elem = document.getElementById("image_source_url");
     if (elem) {
@@ -22,6 +29,9 @@
     return false;
   }
 
+  /**
+   * Set the description field on the submission page.
+   */
   function setDescription(desc) {
     const elem = document.getElementById("image_description");
     if (!elem) {
@@ -33,6 +43,9 @@
     return true;
   }
 
+  /**
+   * Add an array of tags to the submission list.
+   */
   function appendTags(tagArray) {
     const elem = document.getElementById("image_tag_input");
     if (elem) {
@@ -49,6 +62,9 @@
     return false;
   }
 
+  /**
+   * Fetch the actual image via Furbooru's fetch button.
+   */
   function callFetch() {
     const elem = document.getElementById("js-scraper-preview");
     if (elem) {
@@ -58,6 +74,9 @@
     return false;
   }
 
+  /**
+   * Local listener injected into the page.
+   */
   function listener(request) {
     if (request.command === "contentFurbooruFetch") {
       const success =

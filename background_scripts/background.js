@@ -1,3 +1,5 @@
+"use strict";
+
 const SUBMISSION_TAB_TIMEOUT = 1000;
 const MAX_FILL_RETRIES = 5;
 const BOORU_FILL_COMMAND = "contentFurbooruFetch";
@@ -10,7 +12,7 @@ const BOORU_FILL_COMMAND = "contentFurbooruFetch";
 function promiseTimeout(ms, promise) {
   return Promise.race([
     promise,
-    new Promise((resolve, reject) => {
+    new Promise((_, reject) => {
       const id = setTimeout(() => {
         clearTimeout(id);
         reject({ isTimeout: true });
@@ -80,11 +82,14 @@ function createSubmissionTab(urlStr, postData) {
 }
 
 /**
- * Receiver for all background operations.
+ * Listener for all background operations.
  * Generally will expect an object with two properties:
  *    command: Unique string identifier for the type of message we're
  *      receiving.
  *    data: Data to send over to the command handler.
+ * @param request Object described as above.
+ * @returns A resolved promise, carrying an Object with boolean
+ *  field "success".
  */
 function listener(request) {
   if (request.command === "createSubmissionTab") {

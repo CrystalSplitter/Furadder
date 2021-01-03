@@ -51,18 +51,17 @@
         case "direct":
           console.debug("[FUR] Using Direct Fetch");
           return Promise.resolve({
+            listenerType: "derpibooru",
             images: derpibooruHandler(),
             author: getSourceLink(),
             description: getDescription(),
             sourceLink: document.location.href,
             expectedIdx: 0,
           });
-          break;
         default:
           const msg = `[FUR] Unsupported fetch type: ${request.data.fetchType}`;
           console.error(msg);
           return Promise.reject(msg);
-          break;
       }
     }
     return Promise.reject("Not Valid Command For Twitter Handler");

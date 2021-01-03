@@ -1,4 +1,4 @@
-"use strict";
+import {authorAlias} from './aliasing.js';
 
 const SUBMISSION_URL = "https://furbooru.org/images/new";
 const POST_FIRST_ELEMENT = document.getElementById("post-first");
@@ -14,12 +14,6 @@ async function extractData(tabId, data) {
     command: "contentExtractData",
     data: data,
   });
-}
-
-function changeImage(metaDataProp, amount) {}
-
-async function extractAuthor(tabId) {
-  return browser.tabs.sendMessage(tabId, { command: "extractAuthor" });
 }
 
 function displayURL(urlStr) {
@@ -72,7 +66,7 @@ function updateImageDisplay(imgItem) {
   }
 }
 
-function clearRes(width, height) {
+function clearRes() {
   RESOLUTION_ELEM.innerHTML = "";
 }
 
@@ -166,7 +160,11 @@ function main() {
           });
         }
         if (resp.author != null && resp.author != "") {
-          postDataProp.tags.push("artist:" + resp.author);
+          if (resp.listenerType) {
+            postDataProp.tags.push("artist:" + authorAlias(resp.listenerType, resp.author));
+          } else {
+            postDataProp.tags.push("artist:" + resp.author);
+          }
         }
         postDataProp.description = resp.description;
         postDataProp.sourceURLStr = resp.sourceLink;
