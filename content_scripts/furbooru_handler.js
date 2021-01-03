@@ -37,7 +37,7 @@
     if (!elem) {
       return false;
     }
-    if (desc !== "") {
+    if (desc && desc !== "") {
       elem.value = `[bq][==${desc}==][/bq]`;
     }
     return true;
