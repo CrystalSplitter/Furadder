@@ -195,6 +195,9 @@ function resetPopUp(promiseMetaProp, postDataProp) {
               postDataProp.tags.push("artist:" + resp.author);
             }
           }
+          if (resp.extractedTags) {
+            postDataProp.tags = postDataProp.tags.concat(resp.extractedTags);
+          }
           postDataProp.description = resp.description;
           postDataProp.sourceURLStr = resp.sourceLink;
 

@@ -133,5 +133,5 @@
   }
 
   browser.runtime.onMessage.addListener(listener);
-  console.debug("Furadder Successfully Loaded");
+  console.debug("FurAdder Successfully Loaded");
 })();
