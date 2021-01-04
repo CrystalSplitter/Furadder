@@ -33,7 +33,7 @@ function resetNextPrev(idx, length) {
   } else {
     PREV_IMAGE_BUTTON.disabled = false;
   }
-  if (idx === length - 1) {
+  if (idx >= length - 1) {
     NEXT_IMAGE_BUTTON.disabled = true;
   } else {
     NEXT_IMAGE_BUTTON.disabled = false;
@@ -43,11 +43,16 @@ function resetNextPrev(idx, length) {
 function displaySelectedImg(imgItem) {
   const img = new Image();
   img.src = imgItem.src;
+  clearImgDisplay();
+  const elem = document.getElementById("thumb-container");
+  elem.appendChild(img);
+}
+
+function clearImgDisplay() {
   const elem = document.getElementById("thumb-container");
   while (elem.firstChild) {
     elem.removeChild(elem.firstChild);
   }
-  elem.appendChild(img);
 }
 
 function displayRes(width, height) {
@@ -160,6 +165,14 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
   });
 }
 
+function failureCleanup(promiseMetaProp, postDataProp) {
+    promiseMetaProp.imgItems = null;
+    promiseMetaProp.currentImgIdx = null;
+    clearImgDisplay();
+    resetNextPrev(0, 0);
+    clearRes();
+}
+
 function resetPopUp(promiseMetaProp, postDataProp) {
   // Display current page content. ---------------------------------------------
   const tabsCurrent = browser.tabs.query({ active: true, currentWindow: true });
@@ -222,14 +235,15 @@ function resetPopUp(promiseMetaProp, postDataProp) {
           }
 
           // Clean up if images did not load.
-          resetNextPrev(0, 0);
-          clearRes();
           return Promise.reject({
             isError: true,
             message: "Failed to load images",
           });
         })
-        .catch(handleError);
+        .catch((e) => {
+          handleError(e);
+          failureCleanup(promiseMetaProp, postDataProp);
+        });
     })
     .catch(handleError);
 }
