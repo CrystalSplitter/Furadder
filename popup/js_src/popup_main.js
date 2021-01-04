@@ -43,7 +43,6 @@ function resetNextPrev(idx, length) {
 function displaySelectedImg(imgItem) {
   const img = new Image();
   img.src = imgItem.src;
-  img.style = "max-width: 200px";
   const elem = document.getElementById("thumb-container");
   while (elem.firstChild) {
     elem.removeChild(elem.firstChild);

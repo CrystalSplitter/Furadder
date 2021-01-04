@@ -1,57 +1,68 @@
 <!DOCTYPE html>
 
 <html>
-<head>
-  <meta charset="utf-8"/>
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<body>
-  <div id="background-div">
-    <h1 id="primary-title">
-      FurAdder
-    </h1>
-    <div>
-      <button type="button" id="prev-image-button">
-      &#x2190;
-      </button>
-      Select Image
-      <button type="button" id="next-image-button">
-      &#x2192;
-      </button>
+  <body>
+    <div id="background-div">
+      <div id="primary-title">
+        <h1>FurAdder</h1>
+      </div>
+      <div class="content-container">
+        <div class="content">
+          <div id="image-selector-buttons">
+            <button type="button" id="prev-image-button">&#x2190;</button>
+            <div>Select Image</div>
+            <button type="button" id="next-image-button">&#x2192;</button>
+          </div>
+          <div id="thumb-container" class="border-box"></div>
+          <p id="resolution"></p>
+          <div class="fill-container">
+            <button type="button" id="reverse-search">
+              Reverse Image Search
+            </button>
+          </div>
+          <form class="fill-container">
+            <div id="site-info">
+              <div id="site-detector-container" class="border-box"></div>
+              <div id="site-fillable-container" class="border-box">
+                <label class="checkbox-container">
+                  <input
+                    type="checkbox"
+                    id="furbooru-fetch-input"
+                    name="furbooru-fetch-input"
+                    value=""
+                  />
+                  <span class="checkmark"></span>
+                  <span class="checkbox-text">General Fetch</span>
+                </label>
+              </div>
+            </div>
+            <div class="dropdown-container-l1 border-box">
+              <div class="dropdown-container-l2">
+                Tag Preset:
+                <select name="preset" id="tag-presets">
+                  <option value="none">None</option>
+                  <option value="friendship-is-magic">
+                    Friendship is Magic
+                  </option>
+                  <option value="pokemon">Pokemon</option>
+                  <option value="anthro-oc">Anthro OC</option>
+                </select>
+              </div>
+            </div>
+            <div class="horz-button-container">
+              <button type="button" id="post-first">Post</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-    <div id="thumb-container"></div>
-    <p id="resolution"></p>
-    <form>
-      <div id="site-info">
-        <div id="site-detector-container"></div>
-        <div id="site-fillable-container">
-          <label>General Fetch
-            <input type="checkbox"
-                   id="furbooru-fetch-input"
-                   name="furbooru-fetch-input"
-                   value=""/>
-          </label>
-        </div>
-      </div>
-      <div class="dropdown-container-l1">
-        <p>Tag Preset:</p>
-        <div class="dropdown-container-l2">
-        <select name="preset" id="tag-presets">
-          <option value="none">None</option>
-          <option value="friendship-is-magic">Friendship is Magic</option>
-          <option value="pokemon">Pokemon</option>
-          <option value="anthro-oc">Anthro OC</option>
-        </select>
-        </div>
-      </div>
-      <div class="horz-button-container">
-        <button type="button" id="post-first">Post</button>
-      </div>
-      <button type="button" id="reverse-search">Reverse Image Search</button>
-    </form>
-  </div>
-  <script type="module" src="js_src/tag_presets.js"></script>
-  <script type="module" src="js_src/aliasing.js"></script>
-  <script type="module" src="js_src/popup_main.js"></script>
-</body>
+    <script type="module" src="js_src/tag_presets.js"></script>
+    <script type="module" src="js_src/aliasing.js"></script>
+    <script type="module" src="js_src/popup_main.js"></script>
+  </body>
 </html>
