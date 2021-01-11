@@ -1,18 +1,11 @@
 {
-    "description": "Allows easy image extraction and uploading to furbooru.org",
-    "homepage_url": "https://github.com/CrystalSplitter/Furadder",
-    "manifest_version": 2,
-    "name": "Furadder",
-    "version": "0.1",
-    "icons": {
-        "48": "icons/browser_action_icon.png"
-    },
-    "permissions": [
-        "<all_urls>",
-        "tabs"
-    ],
+    "author": "Jordan R A",
     "background": {
         "scripts": ["background_scripts/background.js"]
+    },
+    "browser_action": {
+        "default_icon": "icons/browser_action_icon.png",
+        "default_popup": "popup/furadder.html"
     },
     "content_scripts": [
         {"matches": ["<all_urls>"],
@@ -24,10 +17,18 @@
         {"matches": ["*://derpibooru.org/*"],
          "js": ["content_scripts/derpibooru_handler.js"]}
     ],
-    "browser_action": {
-        "default_icon": "icons/browser_action_icon.png",
-        "default_popup": "popup/furadder.html"
+    "description": "Allows easy image extraction and uploading to furbooru.org",
+    "homepage_url": "https://github.com/CrystalSplitter/Furadder",
+    "icons": {
+        "48": "icons/browser_action_icon.png"
     },
+    "manifest_version": 2,
+    "name": "FurAdder",
+    "permissions": [
+        "<all_urls>",
+        "tabs"
+    ],
+    "version": "0.1.1",
     "web_accessible_resources": [
         "popup/js_src/*"
     ]
