@@ -1,0 +1,169 @@
+:root {
+  --main-bg-color: #15121a;
+  --hi1-bg-color: #36274e;
+  --main-text-color: #b9b0ce;
+  --hi-text-color: #ffffff;
+  --button-default-color: #3a314e;
+  --button-hover-color: #2e2744;
+}
+
+body {
+  font-family: "Trebuchet MS", "sans-serif";
+  color: var(--main-text-color);
+  background-color: var(--main-bg-color);
+  padding: 0;
+  margin: 0;
+  font-size: 12pt;
+}
+
+h1 {
+  color: var(--hi-text-color);
+  background-color: var(--hi1-bg-color);
+  margin: 0;
+  padding: 5px;
+  text-align: center;
+}
+
+button, select {
+  min-width: inherit;
+  max-width: inherit;
+  border: none;
+  text-align: center;
+  color: var(--hi-text-color);
+  background-color: var(--button-default-color);
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button {
+  min-height: 24px;
+}
+
+select {
+  min-height: 16px;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+button:hover, select:hover {
+  background-color: var(--button-hover-color);
+}
+
+#thumb-container {
+  margin: 5px auto 5px auto;
+  min-width: 200px;
+}
+
+#thumb-container > img {
+  max-width: 200px;
+  max-height: 200px;
+  display: block;
+  margin: auto;
+}
+
+#image-selector-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+#image-selector-buttons * {
+  min-width: 80px;
+  margin: 0 5px 0 5px;
+}
+
+#image-selector-buttons div {
+  width: 100%;
+  margin: 0 5px 0 5px;
+}
+
+#image-selector-buttons button {
+  font-size: 16pt;
+}
+
+#image-selector-buttons button:disabled {
+  opacity: 0;
+}
+
+.fill-container {
+  min-width: 100%;
+}
+
+.content-container {
+  margin: 5px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.border-box {
+  border: 1px solid;
+  padding: 5px;
+  margin: 5px 0 0 0;
+  border-color: var(--hi1-bg-color);
+}
+
+.horz-button-container {
+  margin: auto;
+  min-width: 100%;
+}
+
+/* Checkmarks */
+.checkbox-container {
+  display: block;
+  position: relative;
+  padding-left: 2em;
+  cursor: pointer;
+  user-select: none;
+  background-color: var(--button-default-color);
+  min-height: 29px;
+}
+
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  cursor: pointer;
+  display: none;
+}
+
+.checkmark {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  min-height: 25px;
+  min-width: 25px;
+  background-color: #000000;
+}
+
+.checkbox-container .checkbox-text {
+  position: absolute;
+  bottom: 5px;
+  left: 29px;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Show the checkmark when checked */
+.checkbox-container .checkmark:after {
+  content: "\2713\0020";
+  bottom: -5px;
+  left: 3px;
+  font-size: 20pt;
+  color: #ffffff;
+}

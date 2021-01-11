@@ -106,33 +106,32 @@
         case "direct":
           console.debug("[FUR] Using Direct Fetch");
           return Promise.resolve({
+            listenerType: "twitter",
             images: directTwitterHandler(),
             author: getTwitterHandle(),
             description: getDescription(),
             sourceLink: document.location.href,
             expectedIdx: getImgIdx(data.urlStr),
           });
-          break;
         case "general":
           console.debug("[FUR] Using general Server Fetch");
           return Promise.resolve({
+            listenerType: "twitter",
             images: furbooruFetchTwitterHandler(),
             author: null,
             description: null,
             sourceLink: null,
             expectedIdx: getImgIdx(data.urlStr),
           });
-          break;
         default:
           const msg = `[FUR] Unsupported fetch type: ${request.data.fetchType}`;
           console.error(msg);
           return Promise.reject(msg);
-          break;
       }
     }
     return Promise.reject("Not Valid Command For Twitter Handler");
   }
 
   browser.runtime.onMessage.addListener(listener);
-  console.debug("Furadder Successfully Loaded");
+  console.debug("FurAdder Successfully Loaded");
 })();

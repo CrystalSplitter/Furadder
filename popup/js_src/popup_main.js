@@ -1,4 +1,5 @@
-"use strict";
+import { authorAlias } from "./aliasing.js";
+import { getTagsFromPreset } from "./tag_presets.js";
 
 const SUBMISSION_URL = "https://furbooru.org/images/new";
 const POST_FIRST_ELEMENT = document.getElementById("post-first");
@@ -16,20 +17,15 @@ async function extractData(tabId, data) {
   });
 }
 
-function changeImage(metaDataProp, amount) {}
-
-async function extractAuthor(tabId) {
-  return browser.tabs.sendMessage(tabId, { command: "extractAuthor" });
-}
-
 function displayURL(urlStr) {
   const urlObj = new URL(urlStr);
   const elem = document.getElementById("site-detector-container");
+  elem.innerHTML = "";
   elem.appendChild(document.createTextNode(urlObj.host));
 }
 
 /**
- * Reset the previous and next buttons.
+ * Enable/disable the previous and next buttons.
  */
 function resetNextPrev(idx, length) {
   if (idx === 0) {
@@ -37,7 +33,7 @@ function resetNextPrev(idx, length) {
   } else {
     PREV_IMAGE_BUTTON.disabled = false;
   }
-  if (idx === length - 1) {
+  if (idx >= length - 1) {
     NEXT_IMAGE_BUTTON.disabled = true;
   } else {
     NEXT_IMAGE_BUTTON.disabled = false;
@@ -47,14 +43,24 @@ function resetNextPrev(idx, length) {
 function displaySelectedImg(imgItem) {
   const img = new Image();
   img.src = imgItem.src;
-  img.style = "max-width: 200px";
+  clearImgDisplay();
+  const elem = document.getElementById("thumb-container");
+  elem.appendChild(img);
+}
+
+/**
+ *  Remove the pop-up main image display.
+ */
+function clearImgDisplay() {
   const elem = document.getElementById("thumb-container");
   while (elem.firstChild) {
     elem.removeChild(elem.firstChild);
   }
-  elem.appendChild(img);
 }
 
+/**
+ *  set the pop-up's resolution field.
+ */
 function displayRes(width, height) {
   RESOLUTION_ELEM.innerHTML = `${width}px &#215 ${height}px`;
 }
@@ -72,24 +78,70 @@ function updateImageDisplay(imgItem) {
   }
 }
 
-function clearRes(width, height) {
+function clearRes() {
   RESOLUTION_ELEM.innerHTML = "";
 }
 
+/**
+ * Handle any promise errors.
+ */
 function handleError(e) {
   console.error(e);
 }
 
+/**
+ *  Set properties based on the pop-up's form entry.
+ *  @param promiseMetaProp Object reference to edit the properties of.
+ */
+function processPopUpForm(promiseMetaProp) {
+  if (document.getElementById("furbooru-fetch-input").checked) {
+    promiseMetaProp.fetchType = GENERAL_FETCH_TYPE;
+  } else {
+    promiseMetaProp.fetchType = DIRECT_FETCH_TYPE;
+  }
+  const setTags = getTagsFromPreset(
+    document.getElementById("tag-presets").value
+  );
+  if (setTags) {
+    promiseMetaProp.tagPreset = setTags;
+  } else {
+    console.error("Tag Preset failed to load: ", setTags);
+  }
+}
+
+/**
+ * Send a submission request to the background code.
+ *
+ * @param postDataProp Property which holds extracted data from the source.
+ * @param promiseMetaProp Property which holds meta-data, usually form info.
+ * @post Sends out a message to the background extension code.
+ */
+function submit(postDataProp, promiseMetaProp) {
+  const submissionData = {
+    ...postDataProp,
+  };
+  const lowerTags = postDataProp.tags
+    .concat(promiseMetaProp.tagPreset)
+    .map((x) => x.toLowerCase());
+  const uniqueTags = [...new Set(lowerTags)];
+  submissionData.tags = uniqueTags;
+  const request = {
+    command: "createSubmissionTab",
+    data: {
+      urlStr: SUBMISSION_URL,
+      postData: submissionData,
+    },
+  };
+  browser.runtime.sendMessage(request);
+}
+
+/**
+ * Set up form buttons to bind to message sending functions and property
+ * updates.
+ */
 function generalButtonSetup(promiseMetaProp, postDataProp) {
   POST_FIRST_ELEMENT.addEventListener("click", () => {
-    const request = {
-      command: "createSubmissionTab",
-      data: {
-        urlStr: SUBMISSION_URL,
-        postData: postDataProp,
-      },
-    };
-    browser.runtime.sendMessage(request);
+    submit(postDataProp, promiseMetaProp);
   });
   NEXT_IMAGE_BUTTON.addEventListener("click", () => {
     if (
@@ -122,6 +174,102 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
       updateImageDisplay(selectedImg);
     }
   });
+
+  document
+    .getElementById("furbooru-fetch-input")
+    .addEventListener("change", () => {
+      processPopUpForm(promiseMetaProp);
+      resetPopUp(promiseMetaProp, postDataProp);
+    });
+  document.getElementById("tag-presets").addEventListener("change", () => {
+    processPopUpForm(promiseMetaProp);
+  });
+}
+
+/**
+ * Handle cleanup from a failed extraction.
+ */
+function failureCleanup(promiseMetaProp, _) {
+  promiseMetaProp.imgItems = null;
+  promiseMetaProp.currentImgIdx = null;
+  clearImgDisplay();
+  resetNextPrev(0, 0);
+  clearRes();
+}
+
+function resetPopUp(promiseMetaProp, postDataProp) {
+  // Display current page content. ---------------------------------------------
+  const tabsCurrent = browser.tabs.query({ active: true, currentWindow: true });
+  tabsCurrent
+    .then((tabs) => {
+      const curTab = tabs[0];
+      // Display the URL
+      displayURL(curTab.url);
+
+      // Extract the tab data and enable buttons.
+      const requestData = {
+        urlStr: curTab.url,
+        fetchType: promiseMetaProp.fetchType,
+      };
+      extractData(curTab.id, requestData)
+        .then((resp) => {
+          const expectedIdx = resp.expectedIdx !== null ? resp.expectedIdx : 0;
+          promiseMetaProp.currentImgIdx = expectedIdx;
+          promiseMetaProp.imgItems = resp.images;
+          if (expectedIdx >= promiseMetaProp.imgItems.length) {
+            return Promise.reject({
+              isError: true,
+              message: `expectedIdx ${expectedIdx} greater than num images`,
+            });
+          }
+          if (resp.author != null && resp.author != "") {
+            if (resp.listenerType) {
+              postDataProp.tags.push(
+                "artist:" + authorAlias(resp.listenerType, resp.author)
+              );
+            } else {
+              postDataProp.tags.push("artist:" + resp.author);
+            }
+          }
+          if (resp.extractedTags) {
+            postDataProp.tags = postDataProp.tags.concat(resp.extractedTags);
+          }
+          postDataProp.description = resp.description;
+          postDataProp.sourceURLStr = resp.sourceLink;
+
+          if (
+            promiseMetaProp.imgItems &&
+            promiseMetaProp.currentImgIdx !== null
+          ) {
+            // We've successfully loaded images!
+            resetNextPrev(
+              promiseMetaProp.currentImgIdx,
+              promiseMetaProp.imgItems.length
+            );
+            const selectedImg =
+              promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
+            if (promiseMetaProp.fetchType === DIRECT_FETCH_TYPE) {
+              displayRes(selectedImg.width, selectedImg.height);
+            } else {
+              displayUnknownRes();
+            }
+            postDataProp.fetchURLStr = selectedImg.fetchSrc;
+            updateImageDisplay(selectedImg);
+            return Promise.resolve(selectedImg);
+          }
+
+          // Clean up if images did not load.
+          return Promise.reject({
+            isError: true,
+            message: "Failed to load images",
+          });
+        })
+        .catch((e) => {
+          handleError(e);
+          failureCleanup(promiseMetaProp, postDataProp);
+        });
+    })
+    .catch(handleError);
 }
 
 function main() {
@@ -137,70 +285,12 @@ function main() {
     currentImgIdx: null,
     imgItems: null,
     fetchType: DIRECT_FETCH_TYPE,
+    tagPreset: [],
   };
 
   // Set up buttons. -----------------------------------------------------------
   generalButtonSetup(promiseMetaProp, postDataProp);
-
-  // Display current page content. ---------------------------------------------
-  const tabsCurrent = browser.tabs.query({ active: true, currentWindow: true });
-  tabsCurrent
-    .then((tabs) => {
-      const curTab = tabs[0];
-      // Display the URL
-      displayURL(curTab.url);
-
-      // Extract the tab data and enable buttons.
-      const requestData = {
-        urlStr: curTab.url,
-        fetchType: promiseMetaProp.fetchType,
-      };
-      extractData(curTab.id, requestData).then((resp) => {
-        const expectedIdx = resp.expectedIdx !== null ? resp.expectedIdx : 0;
-        promiseMetaProp.currentImgIdx = expectedIdx;
-        promiseMetaProp.imgItems = resp.images;
-        if (expectedIdx >= promiseMetaProp.imgItems.length) {
-          return Promise.reject({
-            isError: true,
-            message: `expectedIdx ${expectedIdx} greater than num images`,
-          });
-        }
-        if (resp.author != null && resp.author != "") {
-          postDataProp.tags.push("artist:" + resp.author);
-        }
-        postDataProp.description = resp.description;
-        postDataProp.sourceURLStr = resp.sourceLink;
-
-        if (
-          promiseMetaProp.imgItems &&
-          promiseMetaProp.currentImgIdx !== null
-        ) {
-          // We've successfully loaded images!
-          resetNextPrev(
-            promiseMetaProp.currentImgIdx,
-            promiseMetaProp.imgItems.length
-          );
-          const selectedImg =
-            promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
-          if (promiseMetaProp.fetchType === DIRECT_FETCH_TYPE) {
-            displayRes(selectedImg.width, selectedImg.height);
-          } else {
-            displayUnknownRes();
-          }
-          postDataProp.fetchURLStr = selectedImg.fetchSrc;
-          updateImageDisplay(selectedImg);
-          return Promise.resolve(selectedImg);
-        }
-
-        // Clean up if images did not load.
-        resetNextPrev(0, 0);
-        clearRes();
-        return Promise.reject({
-          isError: true,
-          message: "Failed to load images",
-        });
-      });
-    })
-    .catch(handleError);
+  processPopUpForm(promiseMetaProp);
+  resetPopUp(promiseMetaProp, postDataProp);
 }
 document.addEventListener("DOMContentLoaded", main);
