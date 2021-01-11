@@ -2,17 +2,19 @@
 
 (() => {
   const SRC_STRING = "https://pbs.twimg.com/media/";
-  const VIEW_PATH = "https://derpicdn.net/img/view"
+  const VIEW_PATH = "https://derpicdn.net/img/view";
   const TAG_LIST = document.querySelector(".tag-list");
 
   function derpibooruHandler() {
     const imgSrc = getViewURL();
-    return [newImageObject({
-      src: imgSrc,
-      lazyLoad: true,
-      width: null,
-      height: null,
-    })];
+    return [
+      newImageObject({
+        src: imgSrc,
+        lazyLoad: true,
+        width: null,
+        height: null,
+      }),
+    ];
   }
 
   /**
@@ -62,9 +64,11 @@
     }
     let arr = [];
     for (let i = 0; i < TAG_LIST.childNodes.length; i++) {
-      const artist = artistTagToName(TAG_LIST.childNodes[i].getAttribute("data-tag-name"));
+      const artist = artistTagToName(
+        TAG_LIST.childNodes[i].getAttribute("data-tag-name")
+      );
       if (artist) {
-        arr.push(artist)
+        arr.push(artist);
       }
     }
     return arr;
@@ -81,10 +85,19 @@
     for (let i = 0; i < TAG_LIST.childNodes.length; i++) {
       const tag = TAG_LIST.childNodes[i].getAttribute("data-tag-name");
       if (!tag.startsWith("artist:")) {
-        arr.push(tag)
+        arr.push(tag);
       }
     }
     return arr;
+  }
+
+  /**
+   * Transform extracted Derpi-tags.
+   * @param tags Array of raw extracted tags.
+   * @returns Transformed derpi tags for Furbooru.
+   */
+  function transformDerpiTags(tags) {
+    return [...tags, "my little pony"];
   }
 
   function listener(request) {
@@ -97,10 +110,11 @@
           return Promise.resolve({
             listenerType: "derpibooru",
             images: derpibooruHandler(),
+            // We can't handle multiple authors yet, so
             author: artists.length > 0 ? artists[0] : null,
             description: getDescription(),
             sourceLink: getSourceLink(),
-            extractedTags: getDerpiTags(),
+            extractedTags: transformDerpiTags(getDerpiTags()),
             expectedIdx: 0,
           });
         case "general":
