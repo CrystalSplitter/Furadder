@@ -5,6 +5,7 @@ const TWITTER_TABLE = {
   itssugarmorning: "sugar morning",
   margony7: "margony",
   southpauzart: "southpauz",
+  lolliponyart: "lollipony",
 };
 const ALIAS_TABLES = {
   twitter: TWITTER_TABLE,
