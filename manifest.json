@@ -1,5 +1,6 @@
 {
-    "description": "Allows easy uploading to Furbooru.com",
+    "description": "Allows easy image extraction and uploading to furbooru.org",
+    "homepage_url": "https://github.com/CrystalSplitter/Furadder",
     "manifest_version": 2,
     "name": "Furadder",
     "version": "0.1",
