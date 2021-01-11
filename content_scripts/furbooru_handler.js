@@ -52,7 +52,7 @@
       if (tagArray.length > 0) {
         // Keep the existing value there, otherwise start empty.
         elem.value = tagArray.reduce(
-          (acc, x) => acc + "," + x.toLowerCase(),
+          (acc, x) => acc + "," + x,
           elem.value ? elem.value : ""
         );
         elem.dispatchEvent(new Event("reload"));

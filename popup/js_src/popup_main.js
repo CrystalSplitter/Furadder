@@ -48,6 +48,9 @@ function displaySelectedImg(imgItem) {
   elem.appendChild(img);
 }
 
+/**
+ *  Remove the pop-up main image display.
+ */
 function clearImgDisplay() {
   const elem = document.getElementById("thumb-container");
   while (elem.firstChild) {
@@ -55,6 +58,9 @@ function clearImgDisplay() {
   }
 }
 
+/**
+ *  set the pop-up's resolution field.
+ */
 function displayRes(width, height) {
   RESOLUTION_ELEM.innerHTML = `${width}px &#215 ${height}px`;
 }
@@ -76,10 +82,17 @@ function clearRes() {
   RESOLUTION_ELEM.innerHTML = "";
 }
 
+/**
+ * Handle any promise errors.
+ */
 function handleError(e) {
   console.error(e);
 }
 
+/**
+ *  Set properties based on the pop-up's form entry.
+ *  @param promiseMetaProp Object reference to edit the properties of.
+ */
 function processPopUpForm(promiseMetaProp) {
   if (document.getElementById("furbooru-fetch-input").checked) {
     promiseMetaProp.fetchType = GENERAL_FETCH_TYPE;
@@ -107,7 +120,11 @@ function submit(postDataProp, promiseMetaProp) {
   const submissionData = {
     ...postDataProp,
   };
-  submissionData.tags = postDataProp.tags.concat(promiseMetaProp.tagPreset);
+  const lowerTags = postDataProp.tags
+    .concat(promiseMetaProp.tagPreset)
+    .map((x) => x.toLowerCase());
+  const uniqueTags = [...new Set(lowerTags)];
+  submissionData.tags = uniqueTags;
   const request = {
     command: "createSubmissionTab",
     data: {
@@ -118,6 +135,10 @@ function submit(postDataProp, promiseMetaProp) {
   browser.runtime.sendMessage(request);
 }
 
+/**
+ * Set up form buttons to bind to message sending functions and property
+ * updates.
+ */
 function generalButtonSetup(promiseMetaProp, postDataProp) {
   POST_FIRST_ELEMENT.addEventListener("click", () => {
     submit(postDataProp, promiseMetaProp);
@@ -165,12 +186,15 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
   });
 }
 
-function failureCleanup(promiseMetaProp, postDataProp) {
-    promiseMetaProp.imgItems = null;
-    promiseMetaProp.currentImgIdx = null;
-    clearImgDisplay();
-    resetNextPrev(0, 0);
-    clearRes();
+/**
+ * Handle cleanup from a failed extraction.
+ */
+function failureCleanup(promiseMetaProp, _) {
+  promiseMetaProp.imgItems = null;
+  promiseMetaProp.currentImgIdx = null;
+  clearImgDisplay();
+  resetNextPrev(0, 0);
+  clearRes();
 }
 
 function resetPopUp(promiseMetaProp, postDataProp) {
