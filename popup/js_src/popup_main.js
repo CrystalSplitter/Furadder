@@ -20,7 +20,7 @@ async function extractData(tabId, data) {
 function displayURL(urlStr) {
   const urlObj = new URL(urlStr);
   const elem = document.getElementById("site-detector-container");
-  elem.innerHTML = "";
+  elem.textContent = "";
   elem.appendChild(document.createTextNode(urlObj.host));
 }
 
@@ -62,11 +62,11 @@ function clearImgDisplay() {
  *  set the pop-up's resolution field.
  */
 function displayRes(width, height) {
-  RESOLUTION_ELEM.innerHTML = `${width}px &#215 ${height}px`;
+  RESOLUTION_ELEM.textContent = `${width}px \u00D7 ${height}px`;
 }
 
 function displayUnknownRes() {
-  RESOLUTION_ELEM.innerHTML = "???px &#215 ???px";
+  RESOLUTION_ELEM.textContent = "???px \u00D7 ???px";
 }
 
 function updateImageDisplay(imgItem) {
@@ -79,7 +79,7 @@ function updateImageDisplay(imgItem) {
 }
 
 function clearRes() {
-  RESOLUTION_ELEM.innerHTML = "";
+  RESOLUTION_ELEM.textContent = "";
 }
 
 /**
