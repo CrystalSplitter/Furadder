@@ -6,6 +6,8 @@ const TWITTER_TABLE = {
   margony7: "margony",
   southpauzart: "southpauz",
   lolliponyart: "lollipony",
+  selenophilesfw: "selenophile",
+  selenophilensfw: "selenophile",
 };
 const ALIAS_TABLES = {
   twitter: TWITTER_TABLE,
