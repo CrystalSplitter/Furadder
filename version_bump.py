@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Bump the version of the manifest.json."""
 
 import argparse
 import json
@@ -16,8 +17,11 @@ def main():
     minor = int(split_version[2])
     if (args.t == "major"):
         major += 1
+        middle = 0
+        minor = 0
     elif (args.t == "middle"):
         middle += 1
+        minor = 0
     elif (args.t == "minor"):
         minor += 1
     else:
@@ -33,7 +37,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("t",
                         type=str,
-                        help="version type (major, middle, minor)")
+                        help="version type {major, middle, minor}")
     return parser.parse_args()
 
 
