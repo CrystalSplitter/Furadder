@@ -8,18 +8,22 @@ please create an issue, or thumbs-up an existing issue!
 
 ## Features
 * Autofills the upload and fetch forum on furbooru.org.
-* Extracts artist name and applies appropriate aliasing.
-* Extracts highest resolution image from the page.
+* Extracts artist name (when available) and applies appropriate aliasing.
+* Extracts highest resolution version from the page.
 * Allows tag presets for faster uploading.
+* Forces a rating tag so you won't forget.
+* Universal extraction (pull images from any site!).
 
-## Supported Sites
+## Intelligently Supported Sites
 * twitter.com
 * derpibooru.org
 
 ## In Progress Sites
-* general upload
 * deviantart.com
 * furaffinity.net
+
+The above can still be extracted using the universal extractor, but it won't
+be as intelligent.
 
 ## Legalese
 This extension is independently developed, and not an official project of furbooru.org.
