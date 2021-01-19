@@ -8,6 +8,7 @@ const BUILT_IN_TAG_PRESETS = {
   ],
   pokemon: ["pokemon"],
   "anthro-oc": ["anthro", "oc only"],
+  "feral-oc": ["feral", "oc only"],
 };
 
 /**
