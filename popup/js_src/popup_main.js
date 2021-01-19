@@ -102,11 +102,12 @@ function processPopUpForm(promiseMetaProp) {
   const setTags = getTagsFromPreset(
     document.getElementById("tag-presets").value
   );
-  if (setTags) {
-    promiseMetaProp.tagPreset = setTags;
-  } else {
+  if (setTags == null) {
     console.error("Tag Preset failed to load: ", setTags);
+    return;
   }
+  const ratingTag = document.getElementById("ratings").value;
+  promiseMetaProp.tagPreset = [...setTags, ratingTag];
 }
 
 /**
@@ -182,6 +183,9 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
       resetPopUp(promiseMetaProp, postDataProp);
     });
   document.getElementById("tag-presets").addEventListener("change", () => {
+    processPopUpForm(promiseMetaProp);
+  });
+  document.getElementById("ratings").addEventListener("change", () => {
     processPopUpForm(promiseMetaProp);
   });
 }
