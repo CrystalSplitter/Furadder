@@ -4,28 +4,6 @@
   const SRC_STRING = "https://pbs.twimg.com/media/";
   const INFO_IDX = 2;
 
-  function newImageObject(props) {
-    return {
-      ...props,
-      fetchSrc: props.fetchSrc ? props.fetchSrc : props.src,
-    };
-  }
-
-  /**
-   * Compare sizes of images.
-   */
-  function sizeCompare(img1, img2) {
-    const pixCount1 = img1.naturalWidth * img1.naturalHeight;
-    const pixCount2 = img2.naturalWidth * img2.naturalHeight;
-    if (pixCount1 < pixCount2) {
-      return -1;
-    }
-    if (pixCount1 > pixCount2) {
-      return 1;
-    }
-    return 0;
-  }
-
   function directTwitterHandler() {
     return filterScrapedImages(SRC_STRING).map((x) => {
       return newImageObject({
