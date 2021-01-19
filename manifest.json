@@ -44,6 +44,14 @@
         },
         {
             "js": [
+                "content_scripts/deviantart_handler.js"
+            ],
+            "matches": [
+                "*://www.deviantart.com/*"
+            ]
+        },
+        {
+            "js": [
                 "content_scripts/universal_handler.js"
             ],
             "matches": [
@@ -52,7 +60,8 @@
             "exclude_matches": [
                 "*://twitter.com/*",
                 "*://derpibooru.org/*",
-                "*://furbooru.org/*"
+                "*://furbooru.org/*",
+                "*://www.deviantart.com/*"
             ]
         }
     ],
