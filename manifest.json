@@ -41,6 +41,19 @@
             "matches": [
                 "*://derpibooru.org/*"
             ]
+        },
+        {
+            "js": [
+                "content_scripts/universal_handler.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ],
+            "exclude_matches": [
+                "*://twitter.com/*",
+                "*://derpibooru.org/*",
+                "*://furbooru.org/*"
+            ]
         }
     ],
     "description": "Allows easy image extraction and uploading to furbooru.org",
