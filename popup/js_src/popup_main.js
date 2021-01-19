@@ -90,6 +90,46 @@ function handleError(e) {
 }
 
 /**
+ * Given the handler response, set any warnings which need to be set.
+ */
+function dispatchWarnings(resp) {
+  if (resp.listenerType == "universal") {
+    setWarning(
+      "Using Universal Extractor",
+      "Some info may be missing or incorrect.");
+    return;
+  }
+  if (resp.listenerType == "deviantart") {
+    setWarning(
+      "DeviantArt Warning",
+      "DeviantArt sometimes hides high-res file behind "
+      + "a download button. "
+      + "FurAdder may not be extracting the highest resolution."
+    );
+    return;
+  }
+  clearWarning();
+}
+
+/**
+ *
+ */
+function setWarning(header, body) {
+  const warnElemHeader = document.getElementById("warning-container-header");
+  warnElemHeader.textContent = "\u26a0 " + header + " \u26a0";
+  const warnElemBody = document.getElementById("warning-container-body");
+  warnElemBody.textContent = body;
+}
+
+/**
+ *
+ */
+function clearWarning() {
+  const warnElem = document.getElementById("warning-container");
+  warnElem.textContent = "";
+}
+
+/**
  *  Set properties based on the pop-up's form entry.
  *  @param promiseMetaProp Object reference to edit the properties of.
  */
@@ -259,6 +299,7 @@ function resetPopUp(promiseMetaProp, postDataProp) {
             }
             postDataProp.fetchURLStr = selectedImg.fetchSrc;
             updateImageDisplay(selectedImg);
+            dispatchWarnings(resp);
             return Promise.resolve(selectedImg);
           }
 
