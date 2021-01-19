@@ -2,6 +2,7 @@
 
 (() => {
   const SRC_STRING = "https://pbs.twimg.com/media/";
+  const INFO_IDX = 2;
 
   function newImageObject(props) {
     return {
@@ -69,21 +70,57 @@
   }
 
   /**
+   * Return the container element of the description content and tweet info.
+   */
+  function getDescriptionContainer() {
+    return document.querySelector("article > div > div > div > :last-child");
+  }
+
+  /**
+   * Return the year of posting.
+   * @returns The year of posting as an integer, or `null` if not found.
+   */
+  function getYear() {
+    const htmlElem = document.querySelector("html");
+    if (htmlElem == null) return null;
+    const lang = htmlElem.getAttribute("lang");
+    if (lang == null) return null;
+    const descriptionContainer = getDescriptionContainer();
+    if (descriptionContainer == null) {
+      console.error("[FUR] Unable to find descriptionContainer.");
+      return null;
+    }
+    const infoElem = descriptionContainer.children[INFO_IDX];
+    if (infoElem == null) return null;
+    const infoStr = infoElem.textContent;
+    const date = parseDateString(infoStr, lang);
+    if (date == null) return null;
+    return date.year;
+  }
+
+  /**
+   *
+   */
+  function getTags() {
+    const output = [];
+    const year = getYear();
+    if (year != null) {
+      output.push(year.toString())
+    }
+    return output;
+  }
+
+  /**
    * Return the textual content of the tweet.
    */
   function getDescription() {
-    const parentDiv = document.querySelector("article > div > div > div");
-    if (parentDiv === null) {
-      return "";
-    }
-    const descriptionContainer = parentDiv.lastChild;
-    if (descriptionContainer === null) {
+    const descriptionContainer = getDescriptionContainer();
+    if (descriptionContainer == null) {
+      console.error("[FUR] Unable to find descriptionContainer.");
       return "";
     }
     const description = descriptionContainer.firstChild;
-    if (description === null) {
-      return "";
-    }
+    if (description == null) return "";
     return description.innerText;
   }
 
@@ -104,7 +141,7 @@
     if (command === "contentExtractData") {
       switch (data.fetchType) {
         case "direct":
-          console.debug("[FUR] Using Direct Fetch");
+          console.debug("[FUR] Using direct fetch");
           return Promise.resolve({
             listenerType: "twitter",
             images: directTwitterHandler(),
@@ -112,9 +149,10 @@
             description: getDescription(),
             sourceLink: document.location.href,
             expectedIdx: getImgIdx(data.urlStr),
+            extractedTags: getTags(),
           });
         case "general":
-          console.debug("[FUR] Using general Server Fetch");
+          console.debug("[FUR] Using general server fetch");
           return Promise.resolve({
             listenerType: "twitter",
             images: furbooruFetchTwitterHandler(),
@@ -122,6 +160,7 @@
             description: null,
             sourceLink: null,
             expectedIdx: getImgIdx(data.urlStr),
+            extractedTags: [],
           });
         default:
           const msg = `[FUR] Unsupported fetch type: ${request.data.fetchType}`;
