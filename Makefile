@@ -15,4 +15,4 @@ bump-middle:
 bump-major:
 	./version_bump.py major
 
-.PHONY: clean
+.PHONY: clean build bump-minor bump-middle bump-major
