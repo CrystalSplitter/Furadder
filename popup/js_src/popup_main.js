@@ -266,13 +266,17 @@ function resetPopUp(promiseMetaProp, postDataProp) {
               message: `expectedIdx ${expectedIdx} greater than num images`,
             });
           }
-          if (resp.author != null && resp.author != "") {
+          if (resp.authors.length > 0) {
             if (resp.listenerType) {
-              postDataProp.tags.push(
-                "artist:" + authorAlias(resp.listenerType, resp.author)
-              );
+              resp.authors.forEach(author => {
+                postDataProp.tags.push(
+                  "artist:" + authorAlias(resp.listenerType, author)
+                );
+              });
             } else {
-              postDataProp.tags.push("artist:" + resp.author);
+              resp.authors.forEach(author => {
+                postDataProp.tags.push("artist:" + author);
+              });
             }
           }
           if (resp.extractedTags) {

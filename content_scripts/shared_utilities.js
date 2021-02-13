@@ -1,3 +1,24 @@
+class Feedback {
+  constructor(args) {
+    this.listenerType = args.listenerType;
+    this.images = args.images || [];
+    this.authors = args.authors || [args.author] || null;
+    this.description = args.description || null;
+    this.sourceLink = args.sourceLink || null;
+    this.expectedIdx = args.expectedIdx || 0;
+    this.extractedTags = args.extractedTags || [];
+    this.expectedResolutions = args.expectedResolutions || [];
+  }
+
+  toObject() {
+    return Object.assign(this);
+  }
+
+  resolvePromise() {
+    return Promise.resolve(this.toObject())
+  }
+};
+
 const MONTH_TO_NUM = {
   jan: 1,
   feb: 2,

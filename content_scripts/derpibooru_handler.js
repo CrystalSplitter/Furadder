@@ -107,27 +107,20 @@
         case "direct":
           console.debug("[FUR] Using Direct Fetch");
           const artists = getArtists();
-          return Promise.resolve({
+          return new Feedback({
             listenerType: "derpibooru",
             images: derpibooruHandler(),
-            // We can't handle multiple authors yet, so
-            author: artists.length > 0 ? artists[0] : null,
+            authors: artists,
             description: getDescription(),
             sourceLink: getSourceLink(),
             extractedTags: transformDerpiTags(getDerpiTags()),
-            expectedIdx: 0,
-          });
+          }).resolvePromise();
         case "general":
           console.debug("[FUR] Using General Fetch");
-          return Promise.resolve({
+          return new Feedback({
             listenerType: "derpibooru",
             images: derpibooruHandler(),
-            author: null,
-            description: null,
-            sourceLink: null,
-            extractedTags: [],
-            expectedIdx: 0,
-          });
+          }).resolvePromise();
         default:
           const msg = `[FUR] Unsupported fetch type: ${request.data.fetchType}`;
           console.error(msg);

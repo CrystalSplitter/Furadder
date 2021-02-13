@@ -15,32 +15,42 @@
     return imgObjs;
   }
 
+  /**
+   * Return the expected resolution as an object, or null if it could
+   * not be found.
+   */
+  function getExpectedRes() {
+    const matches = document
+      .querySelector("main")
+      .innerText.match("([0-9]+)x([0-9]+)px");
+    if (matches.length == 3) {
+      return {
+        width: matches[1],
+        height: matches[2],
+      };
+    }
+    return null;
+  }
+
   function listener(request) {
     const { command, data } = request;
     if (command === "contentExtractData") {
       switch (data.fetchType) {
         case "direct":
           console.debug("[FUR] Using direct fetch");
-          return Promise.resolve({
+          const imgObjs = imageExtractor(false);
+          return new Feedback({
             listenerType: "deviantart",
-            images: imageExtractor(false),
-            author: null,
-            description: null,
+            images: imgObjs,
             sourceLink: document.location.href,
-            expectedIdx: 0,
-            extractedTags: [],
-          });
+            expectedResolutions: [getExpectedRes()],
+          }).resolvePromise();
         case "general":
           console.debug("[FUR] Using general server fetch");
-          return Promise.resolve({
+          return new Feedback({
             listenerType: "deviantart",
             images: [imageExtractor(true)[0]],
-            author: null,
-            description: null,
-            sourceLink: null,
-            expectedIdx: 0,
-            extractedTags: [],
-          });
+          }).resolvePromise();
         default:
           const msg = `[FUR] Unsupported fetch type: ${request.data.fetchType}`;
           console.error(msg);

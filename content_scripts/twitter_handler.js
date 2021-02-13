@@ -69,7 +69,10 @@
       return null;
     }
     const infoElem = descriptionContainer.children[INFO_IDX];
-    if (infoElem == null) return null;
+    if (infoElem == null) {
+      console.error("[FUR] Unable to find infoElem.");
+      return null;
+    }
     const infoStr = infoElem.textContent;
     const date = parseDateString(infoStr, lang);
     if (date == null) return null;
@@ -98,7 +101,10 @@
       return "";
     }
     const description = descriptionContainer.firstChild;
-    if (description == null) return "";
+    if (description == null) {
+      console.error("[FUR] Unable to find firstChild for description.");
+      return "";
+    }
     return description.innerText;
   }
 
@@ -120,7 +126,7 @@
       switch (data.fetchType) {
         case "direct":
           console.debug("[FUR] Using direct fetch");
-          return Promise.resolve({
+          return new Feedback({
             listenerType: "twitter",
             images: directTwitterHandler(),
             author: getTwitterHandle(),
@@ -128,18 +134,14 @@
             sourceLink: document.location.href,
             expectedIdx: getImgIdx(data.urlStr),
             extractedTags: getTags(),
-          });
+          }).resolvePromise();
         case "general":
           console.debug("[FUR] Using general server fetch");
-          return Promise.resolve({
+          return new Feedback({
             listenerType: "twitter",
             images: furbooruFetchTwitterHandler(),
-            author: null,
-            description: null,
-            sourceLink: null,
             expectedIdx: getImgIdx(data.urlStr),
-            extractedTags: [],
-          });
+          }).resolvePromise();
         default:
           const msg = `[FUR] Unsupported fetch type: ${request.data.fetchType}`;
           console.error(msg);
