@@ -92,19 +92,27 @@ function handleError(e) {
 /**
  * Given the handler response, set any warnings which need to be set.
  */
-function dispatchWarnings(resp) {
+function dispatchWarnings(resp, promiseMetaProp) {
   if (resp.listenerType == "universal") {
     setWarning(
       "Using Universal Extractor",
-      "Some info may be missing or incorrect.");
+      "Some info may be missing or incorrect."
+    );
     return;
   }
-  if (resp.listenerType == "deviantart") {
+
+  let hasRes = false;
+  resp.expectedResolutions.forEach((resObj) => {
+    hasRes =
+      resp.images[promiseMetaProp.currentImgIdx].width === resObj.width &&
+      resp.images[promiseMetaProp.currentImgIdx].height === resObj.height;
+  });
+  if (resp.listenerType == "deviantart" && !hasRes) {
     setWarning(
       "DeviantArt Warning",
-      "DeviantArt sometimes hides high-res file behind "
-      + "a download button. "
-      + "FurAdder may not be extracting the highest resolution."
+      "FurAdder is not extracting the expected resolution. " +
+        "DeviantArt sometimes hides high-res files behind " +
+        "a download button. "
     );
     return;
   }
@@ -125,8 +133,10 @@ function setWarning(header, body) {
  *
  */
 function clearWarning() {
-  const warnElem = document.getElementById("warning-container");
-  warnElem.textContent = "";
+  const warnElemHeader = document.getElementById("warning-container-header");
+  warnElemHeader.textContent = "";
+  const warnElemBody = document.getElementById("warning-container-body");
+  warnElemBody.textContent = "";
 }
 
 /**
@@ -177,6 +187,22 @@ function submit(postDataProp, promiseMetaProp) {
 }
 
 /**
+ * Update everything about the postDataProp based on the promiseMetaProp,
+ * in the event that promiseMetaProp changes.
+ */
+function updatePostDataPropFromMeta(postDataProp, promiseMetaProp) {
+  resetNextPrev(promiseMetaProp.currentImgIdx, promiseMetaProp.imgItems.length);
+  const selectedImg = promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
+  if (promiseMetaProp.fetchType === DIRECT_FETCH_TYPE) {
+    displayRes(selectedImg.width, selectedImg.height);
+  } else {
+    displayUnknownRes();
+  }
+  postDataProp.fetchURLStr = selectedImg.fetchSrc;
+  updateImageDisplay(selectedImg);
+}
+
+/**
  * Set up form buttons to bind to message sending functions and property
  * updates.
  */
@@ -185,34 +211,28 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
     submit(postDataProp, promiseMetaProp);
   });
   NEXT_IMAGE_BUTTON.addEventListener("click", () => {
+    promiseMetaProp.manualIdx = true;
     if (
-      promiseMetaProp.imgItems &&
+      promiseMetaProp.imgItems.length > 0 &&
       promiseMetaProp.currentImgIdx < promiseMetaProp.imgItems.length - 1
     ) {
-      if (promiseMetaProp.currentImgIdx !== null) {
-        promiseMetaProp.currentImgIdx++;
-        resetNextPrev(
-          promiseMetaProp.currentImgIdx,
-          promiseMetaProp.imgItems.length
-        );
-      }
-      const selectedImg =
-        promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
-      updateImageDisplay(selectedImg);
+      promiseMetaProp.currentImgIdx++;
+      resetNextPrev(
+        promiseMetaProp.currentImgIdx,
+        promiseMetaProp.imgItems.length
+      );
+      updatePostDataPropFromMeta(postDataProp, promiseMetaProp);
     }
   });
   PREV_IMAGE_BUTTON.addEventListener("click", () => {
+    promiseMetaProp.manualIdx = true;
     if (promiseMetaProp.imgItems && promiseMetaProp.currentImgIdx > 0) {
-      if (promiseMetaProp.currentImgIdx !== null) {
-        promiseMetaProp.currentImgIdx--;
-        resetNextPrev(
-          promiseMetaProp.currentImgIdx,
-          promiseMetaProp.imgItems.length
-        );
-      }
-      const selectedImg =
-        promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
-      updateImageDisplay(selectedImg);
+      promiseMetaProp.currentImgIdx--;
+      resetNextPrev(
+        promiseMetaProp.currentImgIdx,
+        promiseMetaProp.imgItems.length
+      );
+      updatePostDataPropFromMeta(postDataProp, promiseMetaProp);
     }
   });
 
@@ -234,8 +254,8 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
  * Handle cleanup from a failed extraction.
  */
 function failureCleanup(promiseMetaProp, _) {
-  promiseMetaProp.imgItems = null;
-  promiseMetaProp.currentImgIdx = null;
+  promiseMetaProp.imgItems = [];
+  promiseMetaProp.currentImgIdx = 0;
   clearImgDisplay();
   resetNextPrev(0, 0);
   clearRes();
@@ -257,8 +277,11 @@ function resetPopUp(promiseMetaProp, postDataProp) {
       };
       extractData(curTab.id, requestData)
         .then((resp) => {
-          const expectedIdx = resp.expectedIdx !== null ? resp.expectedIdx : 0;
-          promiseMetaProp.currentImgIdx = expectedIdx;
+          // If we've been pressing the image selector buttons, we
+          // should keep the current index.
+          const expectedIdx = promiseMetaProp.manualIdx
+            ? promiseMetaProp.currentImgIdx
+            : resp.expectedIdx;
           promiseMetaProp.imgItems = resp.images;
           if (expectedIdx >= promiseMetaProp.imgItems.length) {
             return Promise.reject({
@@ -266,45 +289,36 @@ function resetPopUp(promiseMetaProp, postDataProp) {
               message: `expectedIdx ${expectedIdx} greater than num images`,
             });
           }
+          promiseMetaProp.currentImgIdx = expectedIdx;
+
+          // Handle post authors/artists ------------------------------
           if (resp.authors.length > 0) {
             if (resp.listenerType) {
-              resp.authors.forEach(author => {
+              resp.authors.forEach((author) => {
                 postDataProp.tags.push(
                   "artist:" + authorAlias(resp.listenerType, author)
                 );
               });
             } else {
-              resp.authors.forEach(author => {
+              resp.authors.forEach((author) => {
                 postDataProp.tags.push("artist:" + author);
               });
             }
           }
+          // Handle post extracted data -------------------------------
           if (resp.extractedTags) {
             postDataProp.tags = postDataProp.tags.concat(resp.extractedTags);
           }
           postDataProp.description = resp.description;
           postDataProp.sourceURLStr = resp.sourceLink;
+          postDataProp.autoquote = resp.autoquote;
 
-          if (
-            promiseMetaProp.imgItems &&
-            promiseMetaProp.currentImgIdx !== null
-          ) {
-            // We've successfully loaded images!
-            resetNextPrev(
-              promiseMetaProp.currentImgIdx,
-              promiseMetaProp.imgItems.length
-            );
-            const selectedImg =
-              promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
-            if (promiseMetaProp.fetchType === DIRECT_FETCH_TYPE) {
-              displayRes(selectedImg.width, selectedImg.height);
-            } else {
-              displayUnknownRes();
-            }
-            postDataProp.fetchURLStr = selectedImg.fetchSrc;
-            updateImageDisplay(selectedImg);
-            dispatchWarnings(resp);
-            return Promise.resolve(selectedImg);
+          if (promiseMetaProp.imgItems.length > 0) {
+            // We extracted some images! Update the display and what to
+            // post.
+            updatePostDataPropFromMeta(postDataProp, promiseMetaProp);
+            dispatchWarnings(resp, promiseMetaProp);
+            return Promise.resolve({ isError: false });
           }
 
           // Clean up if images did not load.
@@ -331,10 +345,11 @@ function main() {
     tags: [],
   };
   const promiseMetaProp = {
-    currentImgIdx: null,
-    imgItems: null,
+    currentImgIdx: 0,
+    imgItems: [],
     fetchType: DIRECT_FETCH_TYPE,
     tagPreset: [],
+    manualIdx: false,
   };
 
   // Set up buttons. -----------------------------------------------------------
