@@ -59,18 +59,18 @@
             ]
         },
         {
-            "js": [
-                "content_scripts/universal_handler.js"
-            ],
-            "matches": [
-                "<all_urls>"
-            ],
             "exclude_matches": [
                 "*://twitter.com/*",
                 "*://derpibooru.org/*",
                 "*://furbooru.org/*",
                 "*://www.deviantart.com/*",
                 "*://www.furaffinity.net/*"
+            ],
+            "js": [
+                "content_scripts/universal_handler.js"
+            ],
+            "matches": [
+                "<all_urls>"
             ]
         }
     ],
@@ -85,7 +85,7 @@
         "<all_urls>",
         "tabs"
     ],
-    "version": "0.2.0",
+    "version": "0.3.0",
     "web_accessible_resources": [
         "popup/js_src/*"
     ]
