@@ -52,6 +52,14 @@
         },
         {
             "js": [
+                "content_scripts/furaffinity_handler.js"
+            ],
+            "matches": [
+                "*://www.furaffinity.net/*"
+            ]
+        },
+        {
+            "js": [
                 "content_scripts/universal_handler.js"
             ],
             "matches": [
@@ -61,7 +69,8 @@
                 "*://twitter.com/*",
                 "*://derpibooru.org/*",
                 "*://furbooru.org/*",
-                "*://www.deviantart.com/*"
+                "*://www.deviantart.com/*",
+                "*://www.furaffinity.net/*"
             ]
         }
     ],
