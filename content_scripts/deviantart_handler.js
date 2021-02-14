@@ -57,7 +57,7 @@
       switch (data.fetchType) {
         case "direct":
           consoleDebug("Using direct fetch");
-          const imgObjs = imageExtractor(false);
+          const imgObjs = genericImageExtractor(false);
           return new Feedback({
             listenerType: "deviantart",
             images: imgObjs,
@@ -70,7 +70,7 @@
           consoleDebug("Using general server fetch");
           return new Feedback({
             listenerType: "deviantart",
-            images: [imageExtractor(true)[0]],
+            images: [genericImageExtractor(true)[0]],
           }).resolvePromise();
         default:
           const msg = `Unsupported fetch type: ${request.data.fetchType}`;

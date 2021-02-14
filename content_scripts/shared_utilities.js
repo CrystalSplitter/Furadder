@@ -138,3 +138,23 @@ function parseDateString(s, lang) {
   }
   return LANGUAGE_YEAR_MAPPINGS[lang](s);
 }
+
+/**
+ * Retrieve a list of images from the page, sorted by size in
+ * descending order.
+ *
+ * @param general Boolean. Use the general fetch option.
+ */
+function genericImageExtractor(general) {
+  const arr = Array.from(document.images);
+  arr.sort(sizeCompare).reverse();
+  const imgObjs = arr.map((x) =>
+    newImageObject({
+      src: x.src,
+      width: x.naturalWidth,
+      height: x.naturalHeight,
+      fetchSrc: general ? document.location.href : x.src,
+    })
+  );
+  return imgObjs;
+}
