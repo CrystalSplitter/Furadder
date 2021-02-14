@@ -59,7 +59,7 @@ button:hover, select:hover {
 
 #thumb-container > img {
   max-width: 200px;
-  max-height: 200px;
+  max-height: 150px;
   display: block;
   margin: auto;
 }
