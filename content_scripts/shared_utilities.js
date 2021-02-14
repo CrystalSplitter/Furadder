@@ -1,13 +1,26 @@
+/**
+ * The message to send back to the extension from a content script.
+ */
 class Feedback {
   constructor(args) {
     this.listenerType = args.listenerType;
-    this.images = args.images || [];
-    this.authors = args.authors || [args.author] || null;
-    this.description = args.description || null;
-    this.sourceLink = args.sourceLink || null;
-    this.expectedIdx = args.expectedIdx || 0;
-    this.extractedTags = args.extractedTags || [];
-    this.expectedResolutions = args.expectedResolutions || [];
+    this.images = args.images === undefined ? [] : args.images;
+    this.description = args.description === undefined ? null : args.description;
+    this.sourceLink = args.sourceLink === undefined ? null : args.sourceLink;
+    this.expectedIdx = args.expectedIdx === undefined ? 0 : args.expectedIdx;
+    this.extractedTags =
+      args.extractedTags === undefined ? [] : args.extractedTags;
+    this.expectedResolutions =
+      args.expectedResolutions == undefined ? [] : args.expectedResolutions;
+    this.autoquote = args.autoquote === undefined ? true : args.autoquote;
+
+    if (args.authors != undefined) {
+      this.authors = args.authors;
+    } else if (args.author != undefined) {
+      this.authors = [args.author];
+    } else {
+      this.authors = [];
+    }
   }
 
   toObject() {
@@ -15,9 +28,17 @@ class Feedback {
   }
 
   resolvePromise() {
-    return Promise.resolve(this.toObject())
+    return Promise.resolve(this.toObject());
   }
-};
+}
+
+function consoleDebug(msg) {
+  console.debug("[FUR] " + msg);
+}
+
+function consoleError(msg) {
+  console.error("[FUR] " + msg);
+}
 
 const MONTH_TO_NUM = {
   jan: 1,
