@@ -20,30 +20,21 @@
     if (command === "contentExtractData") {
       switch (data.fetchType) {
         case "direct":
-          console.debug("[FUR] Using direct fetch");
-          return Promise.resolve({
+          consoleDebug("Using direct fetch");
+          return new Feedback({
             listenerType: "universal",
             images: imageExtractor(false),
-            author: null,
-            description: null,
             sourceLink: document.location.href,
-            expectedIdx: 0,
-            extractedTags: [],
-          });
+          }).resolvePromise();
         case "general":
-          console.debug("[FUR] Using general server fetch");
-          return Promise.resolve({
+          consoleDebug("Using general server fetch");
+          return new Feedback({
             listenerType: "universal",
             images: [imageExtractor(true)[0]],
-            author: null,
-            description: null,
-            sourceLink: null,
-            expectedIdx: 0,
-            extractedTags: [],
-          });
+          }).resolvePromise();
         default:
-          const msg = `[FUR] Unsupported fetch type: ${request.data.fetchType}`;
-          console.error(msg);
+          const msg = `Unsupported fetch type: ${request.data.fetchType}`;
+          consoleError(msg);
           return Promise.reject(msg);
       }
     }
@@ -51,5 +42,5 @@
   }
 
   browser.runtime.onMessage.addListener(listener);
-  console.debug("FurAdder Successfully Loaded");
+  consoleDebug("FurAdder Successfully Loaded");
 })();

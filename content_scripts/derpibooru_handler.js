@@ -23,17 +23,10 @@
   function getViewURL() {
     const hrefElem = document.querySelector("a[title~=View]");
     if (hrefElem === null) {
-      console.error("Unable to find view link");
+      consoleError("Unable to find view link");
       return null;
     }
     return hrefElem.href;
-  }
-
-  /**
-   * Return the extracted description.
-   */
-  function getDescription() {
-    return "";
   }
 
   /**
@@ -92,6 +85,41 @@
   }
 
   /**
+   * Return the extracted description.
+   */
+  function getDescription() {
+    const descElem = document.querySelector(".image-description__text");
+    return descrRecursiveHelper(descElem);
+  }
+
+  function descrRecursiveHelper(node) {
+    const onChildren = (childNs) => {
+      let inner = "";
+      childNs.forEach(child => {
+        inner += descrRecursiveHelper(child);
+      });
+      return inner;
+    };
+
+    switch (node.nodeName) {
+      case "#text":
+        if (node.nodeValue == null) {
+          return "";
+        } else {
+          return node.nodeValue;
+        }
+      case "BR":
+        return "\n";
+      case "BLOCKQUOTE":
+        return "[bq]" + onChildren(node.childNodes) + "[/bq]";
+      case "DIV":
+        return onChildren(node.childNodes);
+      default:
+        return "";
+    }
+  }
+
+  /**
    * Transform extracted Derpi-tags.
    * @param tags Array of raw extracted tags.
    * @returns Transformed derpi tags for Furbooru.
@@ -105,7 +133,7 @@
     if (command === "contentExtractData") {
       switch (data.fetchType) {
         case "direct":
-          console.debug("[FUR] Using Direct Fetch");
+          consoleDebug("Using Direct Fetch");
           const artists = getArtists();
           return new Feedback({
             listenerType: "derpibooru",
@@ -114,16 +142,17 @@
             description: getDescription(),
             sourceLink: getSourceLink(),
             extractedTags: transformDerpiTags(getDerpiTags()),
+            autoquote: false,
           }).resolvePromise();
         case "general":
-          console.debug("[FUR] Using General Fetch");
+          consoleDebug("Using General Fetch");
           return new Feedback({
             listenerType: "derpibooru",
             images: derpibooruHandler(),
           }).resolvePromise();
         default:
-          const msg = `[FUR] Unsupported fetch type: ${request.data.fetchType}`;
-          console.error(msg);
+          const msg = `Unsupported fetch type: ${request.data.fetchType}`;
+          consoleError(msg);
           return Promise.reject(msg);
       }
     }
@@ -131,5 +160,5 @@
   }
 
   browser.runtime.onMessage.addListener(listener);
-  console.debug("FurAdder Successfully Loaded");
+  consoleDebug("FurAdder Successfully Loaded");
 })();

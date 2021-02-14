@@ -32,13 +32,18 @@
   /**
    * Set the description field on the submission page.
    */
-  function setDescription(desc) {
+  function setDescription(desc, autoquote=true) {
     const elem = document.getElementById("image_description");
     if (!elem) {
       return false;
     }
+
     if (desc && desc !== "") {
-      elem.value = `[bq][==${desc}==][/bq]`;
+      if (autoquote) {
+        elem.value = `[bq][==${desc}==][/bq]`;
+      } else {
+        elem.value = desc;
+      }
     }
     return true;
   }
@@ -82,7 +87,7 @@
       const success =
         setFetchURL(request.data.fetchURLStr) &&
         setSourceURL(request.data.sourceURLStr) &&
-        setDescription(request.data.description) &&
+        setDescription(request.data.description, request.data.autoquote) &&
         callFetch() &&
         appendTags(request.data.tags ? request.data.tags : []);
       return Promise.resolve({ success });
@@ -91,5 +96,5 @@
   }
 
   browser.runtime.onMessage.addListener(listener);
-  console.debug("Furadder Successfully Loaded");
+  consoleDebug("Furadder Successfully Loaded");
 })();

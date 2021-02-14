@@ -65,12 +65,12 @@
     if (lang == null) return null;
     const descriptionContainer = getDescriptionContainer();
     if (descriptionContainer == null) {
-      console.error("[FUR] Unable to find descriptionContainer.");
+      consoleError("Unable to find descriptionContainer.");
       return null;
     }
     const infoElem = descriptionContainer.children[INFO_IDX];
     if (infoElem == null) {
-      console.error("[FUR] Unable to find infoElem.");
+      consoleError("Unable to find infoElem.");
       return null;
     }
     const infoStr = infoElem.textContent;
@@ -97,12 +97,12 @@
   function getDescription() {
     const descriptionContainer = getDescriptionContainer();
     if (descriptionContainer == null) {
-      console.error("[FUR] Unable to find descriptionContainer.");
+      consoleError("Unable to find descriptionContainer.");
       return "";
     }
     const description = descriptionContainer.firstChild;
     if (description == null) {
-      console.error("[FUR] Unable to find firstChild for description.");
+      consoleError("Unable to find firstChild for description.");
       return "";
     }
     return description.innerText;
@@ -116,7 +116,7 @@
     if (splits.length >= 4) {
       return splits[3];
     }
-    console.error("[FUR] Unable to get twitter handle.");
+    consoleError("Unable to get twitter handle.");
     return "";
   }
 
@@ -125,26 +125,26 @@
     if (command === "contentExtractData") {
       switch (data.fetchType) {
         case "direct":
-          console.debug("[FUR] Using direct fetch");
+          consoleDebug("Using direct fetch");
           return new Feedback({
             listenerType: "twitter",
             images: directTwitterHandler(),
-            author: getTwitterHandle(),
+            authors: [getTwitterHandle()],
             description: getDescription(),
             sourceLink: document.location.href,
             expectedIdx: getImgIdx(data.urlStr),
             extractedTags: getTags(),
           }).resolvePromise();
         case "general":
-          console.debug("[FUR] Using general server fetch");
+          consoleDebug("Using general server fetch");
           return new Feedback({
             listenerType: "twitter",
             images: furbooruFetchTwitterHandler(),
             expectedIdx: getImgIdx(data.urlStr),
           }).resolvePromise();
         default:
-          const msg = `[FUR] Unsupported fetch type: ${request.data.fetchType}`;
-          console.error(msg);
+          const msg = `Unsupported fetch type: ${request.data.fetchType}`;
+          consoleError(msg);
           return Promise.reject(msg);
       }
     }
@@ -152,5 +152,5 @@
   }
 
   browser.runtime.onMessage.addListener(listener);
-  console.debug("FurAdder Successfully Loaded");
+  consoleDebug("FurAdder Successfully Loaded");
 })();
