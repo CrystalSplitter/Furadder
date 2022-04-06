@@ -15,17 +15,17 @@ def main():
     major = int(split_version[0])
     middle = int(split_version[1])
     minor = int(split_version[2])
-    if (args.t == "major"):
+    if (args.version_type == "major"):
         major += 1
         middle = 0
         minor = 0
-    elif (args.t == "middle"):
+    elif (args.version_type == "middle"):
         middle += 1
         minor = 0
-    elif (args.t == "minor"):
+    elif (args.version_type == "minor"):
         minor += 1
     else:
-        raise ValueError(f"Unknown version type: {args.t}")
+        raise ValueError(f"Unknown version type: {args.version_type}")
     manifest_dict["version"] = ".".join(
         [str(x) for x in [major, middle, minor]])
     with open("manifest.json", "w") as f:
@@ -35,7 +35,7 @@ def main():
 def parse_args():
     """Parse arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("t",
+    parser.add_argument("version_type",
                         type=str,
                         help="version type {major, middle, minor}")
     return parser.parse_args()
