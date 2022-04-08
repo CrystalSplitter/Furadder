@@ -4,7 +4,7 @@ TARGET_DIR='build'
 SHARED_SRC='shared'
 CHROMIUM_SRC='chromium'
 FIREFOX_SRC='firefox'
-POLYFILL_PATH='third_party/mozilla_browser_polyfill_0.9.0/browser-polyfill.js'
+POLYFILL_PATH='third_party/mozilla_browser_polyfill_0.9.0/browser-polyfill.min.js'
 
 for target in chromium firefox; do
   mkdir -p "${TARGET_DIR}/${target}" || true

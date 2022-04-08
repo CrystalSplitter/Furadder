@@ -1,5 +1,11 @@
 "use strict";
 
+try {
+  importScripts("browser-polyfill.min.js");
+} catch (e) {
+  console.log("Could not load Polyfill");
+}
+
 const SUBMISSION_TAB_TIMEOUT = 1000;
 const MAX_FILL_RETRIES = 5;
 const BOORU_FILL_COMMAND = "contentFurbooruFetch";

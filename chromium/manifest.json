@@ -1,17 +1,16 @@
 {
-    "author": "Jordan R A",
+    "author": "Jordan R AW",
     "background": {
-        "scripts": [
-            "background_scripts/background.js"
-        ]
+        "service_worker": "service_worker.js"
     },
-    "browser_action": {
+    "action": {
         "default_icon": "icons/browser_action_icon.png",
         "default_popup": "popup/furadder.html"
     },
     "content_scripts": [
         {
             "js": [
+                "content_scripts/third_party/browser-polyfill.min.js",
                 "content_scripts/shared_utilities.js"
             ],
             "matches": [
@@ -79,14 +78,16 @@
     "icons": {
         "48": "icons/browser_action_icon.png"
     },
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "FurAdder",
     "permissions": [
-        "<all_urls>",
         "tabs"
     ],
     "version": "0.3.0",
     "web_accessible_resources": [
-        "popup/js_src/*"
+        {
+            "resources": ["popup/third_party/*", "popup/js_src/*"],
+            "matches": ["<all_urls>"]
+        }
     ]
 }

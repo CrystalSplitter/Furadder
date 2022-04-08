@@ -86,7 +86,7 @@ function clearRes() {
  * Handle any promise errors.
  */
 function handleError(e) {
-  console.error(e);
+  console.error("Encountered a promise error:", e);
 }
 
 /**
