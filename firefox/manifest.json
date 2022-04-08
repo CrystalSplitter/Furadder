@@ -1,0 +1,92 @@
+{
+    "author": "Jordan R A",
+    "background": {
+        "scripts": [
+            "background_scripts/background.js"
+        ]
+    },
+    "browser_action": {
+        "default_icon": "icons/browser_action_icon.png",
+        "default_popup": "popup/furadder.html"
+    },
+    "content_scripts": [
+        {
+            "js": [
+                "content_scripts/shared_utilities.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        },
+        {
+            "js": [
+                "content_scripts/twitter_handler.js"
+            ],
+            "matches": [
+                "*://twitter.com/*"
+            ]
+        },
+        {
+            "js": [
+                "content_scripts/furbooru_handler.js"
+            ],
+            "matches": [
+                "*://furbooru.org/*"
+            ]
+        },
+        {
+            "js": [
+                "content_scripts/derpibooru_handler.js"
+            ],
+            "matches": [
+                "*://derpibooru.org/*"
+            ]
+        },
+        {
+            "js": [
+                "content_scripts/deviantart_handler.js"
+            ],
+            "matches": [
+                "*://www.deviantart.com/*"
+            ]
+        },
+        {
+            "js": [
+                "content_scripts/furaffinity_handler.js"
+            ],
+            "matches": [
+                "*://www.furaffinity.net/*"
+            ]
+        },
+        {
+            "exclude_matches": [
+                "*://twitter.com/*",
+                "*://derpibooru.org/*",
+                "*://furbooru.org/*",
+                "*://www.deviantart.com/*",
+                "*://www.furaffinity.net/*"
+            ],
+            "js": [
+                "content_scripts/universal_handler.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "description": "Allows easy image extraction and uploading to furbooru.org",
+    "homepage_url": "https://github.com/CrystalSplitter/Furadder",
+    "icons": {
+        "48": "icons/browser_action_icon.png"
+    },
+    "manifest_version": 2,
+    "name": "FurAdder",
+    "permissions": [
+        "<all_urls>",
+        "tabs"
+    ],
+    "version": "0.3.0",
+    "web_accessible_resources": [
+        "popup/js_src/*"
+    ]
+}

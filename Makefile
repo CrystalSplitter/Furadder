@@ -1,10 +1,13 @@
 .default: build
 
-build:
+clean:
+	rm -r build
+
+build: prepare
 	./build.bash
 
-clean:
-	rm -rf build/
+prepare: 
+	./prepare.bash
 
 firefox:
 	firefox 'about:debugging#/runtime/this-firefox'
@@ -18,4 +21,4 @@ bump-middle:
 bump-major:
 	./version_bump.py major
 
-.PHONY: clean build bump-minor bump-middle bump-major firefox
+.PHONY: clean prepare build bump-minor bump-middle bump-major firefox
