@@ -73,6 +73,7 @@ button:hover, select:hover {
 #image-selector-buttons * {
   min-width: 80px;
   margin: 0 5px 0 5px;
+  white-space: nowrap;
 }
 
 #image-selector-buttons div {
