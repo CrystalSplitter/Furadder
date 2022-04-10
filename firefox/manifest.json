@@ -6,7 +6,7 @@
         ]
     },
     "browser_action": {
-        "default_icon": "icons/browser_action_icon.png",
+        "default_icon": "icons/furadder_icon_32.png",
         "default_popup": "popup/furadder.html"
     },
     "content_scripts": [
@@ -77,7 +77,8 @@
     "description": "Allows easy image extraction and uploading to furbooru.org",
     "homepage_url": "https://github.com/CrystalSplitter/Furadder",
     "icons": {
-        "48": "icons/browser_action_icon.png"
+        "48": "icons/furadder_icon_48.png",
+        "32": "icons/furadder_icon_32.png"
     },
     "manifest_version": 2,
     "name": "FurAdder",
