@@ -4,7 +4,7 @@ A [furbooru.org](https://furbooru.org) image extractor and uploader.
 **This extension is still in development.** If you would like to give feature recommendations,
 please create an issue, or thumbs-up an existing issue!
 
-![screenshot_v0.1](media/screenshot_v0.1.png)
+![screenshot_v0.3](media/screenshot_v0.3.png)
 
 ## Features
 * Autofills the upload and fetch forum on furbooru.org.
