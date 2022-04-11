@@ -1,9 +1,9 @@
 "use strict";
 
 try {
-  importScripts("browser-polyfill.min.js");
+  importScripts("background_scripts/third_party/browser-polyfill.min.js");
 } catch (e) {
-  console.log("Could not load Polyfill");
+  console.log("Could not load Polyfill: ", e);
 }
 
 const SUBMISSION_TAB_TIMEOUT = 1000;

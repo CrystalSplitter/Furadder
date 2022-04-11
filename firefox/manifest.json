@@ -14,6 +14,7 @@
             "js": [
                 "content_scripts/shared_utilities.js"
             ],
+            "run_at": "document_start",
             "matches": [
                 "<all_urls>"
             ]
@@ -86,7 +87,7 @@
         "<all_urls>",
         "tabs"
     ],
-    "version": "0.3.0",
+    "version": "0.4.0",
     "web_accessible_resources": [
         "popup/js_src/*"
     ]

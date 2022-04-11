@@ -13,6 +13,7 @@
                 "content_scripts/third_party/browser-polyfill.min.js",
                 "content_scripts/shared_utilities.js"
             ],
+            "run_at": "document_start",
             "matches": [
                 "<all_urls>"
             ]
@@ -84,7 +85,7 @@
     "permissions": [
         "tabs"
     ],
-    "version": "0.3.0",
+    "version": "0.4.0",
     "web_accessible_resources": [
         {
             "resources": ["popup/third_party/*", "popup/js_src/*"],

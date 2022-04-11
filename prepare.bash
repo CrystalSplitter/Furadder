@@ -16,4 +16,7 @@ for target in chromium firefox; do
   cp -u "${POLYFILL_PATH}" "${TARGET_DIR}/${target}/background_scripts/third_party"
   cp -u "${POLYFILL_PATH}" "${TARGET_DIR}/${target}/popup/third_party"
   cp -u "${POLYFILL_PATH}" "${TARGET_DIR}/${target}/content_scripts/third_party"
+  cp -u "${POLYFILL_PATH}.map" "${TARGET_DIR}/${target}/background_scripts/third_party"
+  cp -u "${POLYFILL_PATH}.map" "${TARGET_DIR}/${target}/popup/third_party"
+  cp -u "${POLYFILL_PATH}.map" "${TARGET_DIR}/${target}/content_scripts/third_party"
 done
