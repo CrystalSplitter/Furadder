@@ -25,5 +25,12 @@ please create an issue, or thumbs-up an existing issue!
 The above can still be extracted using the universal extractor, but it won't
 be as intelligent.
 
+## Build Instructions
+
+```bash
+git clone https://github.com/CrystalSplitter/Furadder furadder && cd furadder
+make build  # This generates the actual source in build/
+```
+
 ## Legalese
 This extension is independently developed, and not an official project of furbooru.org.
