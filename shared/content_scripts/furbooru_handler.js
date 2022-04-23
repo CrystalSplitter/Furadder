@@ -32,7 +32,7 @@
   /**
    * Set the description field on the submission page.
    */
-  function setDescription(desc, autoquote=true) {
+  function setDescription(desc, autoquote = true) {
     const elem = document.getElementById("image_description");
     if (!elem) {
       return false;

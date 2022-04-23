@@ -86,7 +86,7 @@
     const output = [];
     const year = getYear();
     if (year != null) {
-      output.push(year.toString())
+      output.push(year.toString());
     }
     return output;
   }

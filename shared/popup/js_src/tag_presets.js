@@ -1,5 +1,5 @@
 const BUILT_IN_TAG_PRESETS = {
-  "none": [],
+  none: [],
   "friendship-is-magic": [
     "feral",
     "pony",

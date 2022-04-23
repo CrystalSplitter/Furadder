@@ -95,7 +95,7 @@
   function descrRecursiveHelper(node) {
     const onChildren = (childNs) => {
       let inner = "";
-      childNs.forEach(child => {
+      childNs.forEach((child) => {
         inner += descrRecursiveHelper(child);
       });
       return inner;

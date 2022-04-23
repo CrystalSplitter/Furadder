@@ -33,7 +33,9 @@
   }
 
   function getArtists() {
-    const elem = document.querySelector("div > div > span > a.user-link[data-username]")
+    const elem = document.querySelector(
+      "div > div > span > a.user-link[data-username]"
+    );
     if (elem == null) {
       consoleError("Unable to find artist");
       return [];
