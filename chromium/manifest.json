@@ -1,11 +1,11 @@
 {
-  "author": "Jordan R AW",
-  "background": {
-    "service_worker": "service_worker.js"
-  },
   "action": {
     "default_icon": "icons/furadder_icon_32.png",
     "default_popup": "popup/furadder.html"
+  },
+  "author": "Jordan R AW",
+  "background": {
+    "service_worker": "service_worker.js"
   },
   "content_scripts": [
     {
@@ -13,28 +13,50 @@
         "content_scripts/third_party/browser-polyfill.min.js",
         "content_scripts/shared_utilities.js"
       ],
-      "run_at": "document_start",
-      "matches": ["<all_urls>"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "run_at": "document_start"
     },
     {
-      "js": ["content_scripts/twitter_handler.js"],
-      "matches": ["*://twitter.com/*"]
+      "js": [
+        "content_scripts/twitter_handler.js"
+      ],
+      "matches": [
+        "*://twitter.com/*"
+      ]
     },
     {
-      "js": ["content_scripts/furbooru_handler.js"],
-      "matches": ["*://furbooru.org/*"]
+      "js": [
+        "content_scripts/furbooru_handler.js"
+      ],
+      "matches": [
+        "*://furbooru.org/*"
+      ]
     },
     {
-      "js": ["content_scripts/derpibooru_handler.js"],
-      "matches": ["*://derpibooru.org/*"]
+      "js": [
+        "content_scripts/derpibooru_handler.js"
+      ],
+      "matches": [
+        "*://derpibooru.org/*"
+      ]
     },
     {
-      "js": ["content_scripts/deviantart_handler.js"],
-      "matches": ["*://www.deviantart.com/*"]
+      "js": [
+        "content_scripts/deviantart_handler.js"
+      ],
+      "matches": [
+        "*://www.deviantart.com/*"
+      ]
     },
     {
-      "js": ["content_scripts/furaffinity_handler.js"],
-      "matches": ["*://www.furaffinity.net/*"]
+      "js": [
+        "content_scripts/furaffinity_handler.js"
+      ],
+      "matches": [
+        "*://www.furaffinity.net/*"
+      ]
     },
     {
       "exclude_matches": [
@@ -44,24 +66,35 @@
         "*://www.deviantart.com/*",
         "*://www.furaffinity.net/*"
       ],
-      "js": ["content_scripts/universal_handler.js"],
-      "matches": ["<all_urls>"]
+      "js": [
+        "content_scripts/universal_handler.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "description": "Allows easy image extraction and uploading to furbooru.org",
   "homepage_url": "https://github.com/CrystalSplitter/Furadder",
   "icons": {
-    "48": "icons/furadder_icon_48.png",
-    "32": "icons/furadder_icon_32.png"
+    "32": "icons/furadder_icon_32.png",
+    "48": "icons/furadder_icon_48.png"
   },
   "manifest_version": 3,
   "name": "FurAdder",
-  "permissions": ["tabs"],
-  "version": "0.4.0",
+  "permissions": [
+    "tabs"
+  ],
+  "version": "0.4.1",
   "web_accessible_resources": [
     {
-      "resources": ["popup/third_party/*", "popup/js_src/*"],
-      "matches": ["<all_urls>"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "popup/third_party/*",
+        "popup/js_src/*"
+      ]
     }
   ]
 }
