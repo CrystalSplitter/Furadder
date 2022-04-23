@@ -1,4 +1,4 @@
-.default: build
+.DEFAULT_GOAL := build
 
 clean:
 	rm -r build
