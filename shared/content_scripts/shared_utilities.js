@@ -158,3 +158,18 @@ function genericImageExtractor(general) {
   );
   return imgObjs;
 }
+
+/**
+ * Escape potential markdown text.
+ */
+function escape_markdown(s) {
+  return s
+    .replaceAll("*", "\\*")
+    .replaceAll("-", "\\-")
+    .replaceAll("_", "\\_")
+    .replaceAll(">", "\\>")
+    .replaceAll("#", "\\#")
+    .replaceAll("[", "\\[")
+    .replaceAll("`", "\\`")
+    .replaceAll("]", "\\]");
+}

@@ -40,7 +40,7 @@
 
     if (desc && desc !== "") {
       if (autoquote) {
-        elem.value = `[bq][==${desc}==][/bq]`;
+        elem.value = "> " + escape_markdown(desc).replaceAll("\n", "\n> ");
       } else {
         elem.value = desc;
       }
