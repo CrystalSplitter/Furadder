@@ -21,4 +21,7 @@ bump-middle:
 bump-major:
 	./version_bump.py major
 
+prettier:
+	prettier -w shared chromium firefox
+
 .PHONY: clean prepare build bump-minor bump-middle bump-major firefox
