@@ -31,9 +31,16 @@
 
   /**
    * Return the source link provided.
+   * @returns {string} Source URL.
    */
   function getSourceLink() {
-    return document.location.href;
+    const src = document.querySelector(
+      "#image-source > p > a.js-source-link"
+    ).textContent;
+    if (src === null) {
+      return document.location.href;
+    }
+    return src;
   }
 
   /**
