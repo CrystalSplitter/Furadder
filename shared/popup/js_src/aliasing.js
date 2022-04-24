@@ -1,13 +1,14 @@
 "use strict";
 
 const TWITTER_TABLE = {
+  alumx_mlp: "alumx",
   dawnf1re: "dawnfire",
   itssugarmorning: "sugar morning",
-  margony7: "margony",
-  southpauzart: "southpauz",
   lolliponyart: "lollipony",
-  selenophilesfw: "selenophile",
+  margony7: "margony",
   selenophilensfw: "selenophile",
+  selenophilesfw: "selenophile",
+  southpauzart: "southpauz",
 };
 const ALIAS_TABLES = {
   twitter: TWITTER_TABLE,
