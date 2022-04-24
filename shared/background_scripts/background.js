@@ -1,7 +1,9 @@
 "use strict";
 
 try {
-  importScripts("background_scripts/third_party/browser-polyfill.min.js");
+  if (importScripts) {
+    importScripts("background_scripts/third_party/browser-polyfill.min.js");
+  }
 } catch (e) {
   console.log("Could not load Polyfill: ", e);
 }
@@ -12,8 +14,9 @@ const BOORU_FILL_COMMAND = "contentFurbooruFetch";
 
 /**
  * Wrap a promise call with a timeout.
- * @param ms Milliseconds to timeout on.
- * @param promise Promise to wrap and return.
+ * @param {number} ms Milliseconds to timeout on.
+ * @param {Promise<T>} promise Promise to wrap and return.
+ * @returns {Promise<any>} New promise, but with a timeout
  */
 function promiseTimeout(ms, promise) {
   return Promise.race([
@@ -71,7 +74,7 @@ function booruFill(tabId, postData) {
 
 /**
  * Open a new submission tab.
- * @param urlStr String URL to create a new tab at.
+ * @param {string} urlStr String URL to create a new tab at.
  * @param postData Metadata to attach to the booru post.
  */
 function createSubmissionTab(urlStr, postData) {

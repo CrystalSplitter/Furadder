@@ -52,7 +52,7 @@ function displaySelectedImg(imgItem) {
 }
 
 /**
- *  Remove the pop-up main image display.
+ * Remove the pop-up main image display.
  */
 function clearImgDisplay() {
   const elem = document.getElementById("thumb-container");
@@ -62,7 +62,9 @@ function clearImgDisplay() {
 }
 
 /**
- *  set the pop-up's resolution field.
+ * set the pop-up's resolution field.
+ * @param {number} width Image width.
+ * @param {number} height Image height.
  */
 function displayRes(width, height) {
   RESOLUTION_ELEM.textContent = `${width}px \u00D7 ${height}px`;
@@ -381,7 +383,7 @@ function resetPopUp(promiseMetaProp, postDataProp) {
 }
 
 /**
- * @param {.imgItems} promiseMetaProp 
+ * @param {.imgItems} promiseMetaProp
  * @returns The current image object.
  */
 function getActiveImage(promiseMetaProp) {

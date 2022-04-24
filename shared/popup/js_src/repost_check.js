@@ -3,7 +3,7 @@ export const IMAGES_URL = "https://furbooru.org/images/";
 
 /**
  * @param {string} queryContent Generic, unescaped query string
- * @returns Fetch promise of the query.
+ * @returns {Promise<Response>} Fetch promise of the query.
  */
 export async function queryBooru(queryContent) {
   return fetch(JSON_API_BASE + `/search?q=${queryContent}`);
@@ -11,7 +11,7 @@ export async function queryBooru(queryContent) {
 
 /**
  * @param {string} artist Artist name
- * @returns Promise of every image by the artist.
+ * @returns {Promise<any[]>} Promise of every image by the artist.
  */
 export async function getImagesByArtist(artist) {
   return queryBooru(`artist:${artist}`)
@@ -36,8 +36,10 @@ async function getPotentialRepostFromHash(hash) {
 }
 
 /**
- * @param {string} url 
- * @returns Promise which contains the first matching image, or null.
+ * Return the Booru URL if this is a repost, otherwise return null.
+ * @param {string} url Target of a potential repost
+ * @returns {Promise<any | null>} Promise which contains the first
+ * matching repost image, or null.
  */
 export async function getPotentialRepost(url) {
   return sha512FromUrl(url)
@@ -50,7 +52,7 @@ export async function getPotentialRepost(url) {
 
 /**
  * @param {string} url URL to get a blob from.
- * @returns Promise of sha512 string of the blob response.
+ * @returns {Promise<string>} Promise of sha512 string of the blob response.
  */
 async function sha512FromUrl(url) {
   return fetch(url)
@@ -59,6 +61,11 @@ async function sha512FromUrl(url) {
     .then((x) => sha512SumAsStr(x));
 }
 
+/**
+ *
+ * @param {ArrayBuffer} arrayBuffer
+ * @returns {Promise<string>}
+ */
 async function sha512SumAsStr(arrayBuffer) {
   return crypto.subtle.digest("SHA-512", arrayBuffer).then((buf) => {
     return Array.prototype.map
