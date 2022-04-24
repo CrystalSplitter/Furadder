@@ -7,6 +7,8 @@
   --button-hover-color: #2e2744;
   --warning-color: #ff904e;
   --url-color: #90fbff;
+  --thumb-max-width: 200px;
+  --thumb-max-height: 100px;
 }
 
 body {
@@ -58,12 +60,13 @@ select:hover {
 
 #thumb-container {
   margin: 5px auto 5px auto;
-  min-width: 200px;
+  min-width: var(--thumb-max-width);
+  min-height: var(--thumb-max-height);
 }
 
 #thumb-container > img {
-  max-width: 200px;
-  max-height: 100px;
+  max-width: var(--thumb-max-width);
+  max-height: var(--thumb-max-height);
   display: block;
   margin: auto;
 }
