@@ -21,13 +21,6 @@
           </div>
           <div id="thumb-container" class="border-box"></div>
           <p id="resolution"></p>
-          <!-- Disabled until I can fix the reverse searching.
-          <div class="fill-container">
-            <button type="button" id="reverse-search">
-              Reverse Image Search
-            </button>
-          </div>
-          -->
           <form class="fill-container">
             <div id="site-info">
               <div>
@@ -44,12 +37,11 @@
               </div>
               <div class="border-box">
                 <div id="site-detector-container"></div>
-                <div id="warning-container">
-                  <p id="warning-container-header"></p>
-                  <p id="warning-container-body"></p>
-                </div>
+                <div id="warning-container"></div>
               </div>
+              <!-- Removed until it's actually used.
               <div id="site-fillable-container" class="border-box"></div>
+              -->
             </div>
             <div class="dropdown-container-l1 border-box">
               <div class="dropdown-container-l2">
@@ -73,6 +65,7 @@
                   <option value="suggestive">suggestive</option>
                   <option value="questionable">questionable</option>
                   <option value="explicit">explicit</option>
+                  <option value="grimdark">grimdark</option>
                 </select>
               </div>
             </div>
@@ -85,6 +78,7 @@
     </div>
     <script type="module" src="js_src/tag_presets.js"></script>
     <script type="module" src="js_src/aliasing.js"></script>
+    <script type="module" src="js_src/repost_check.js"></script>
     <script type="module" src="js_src/popup_main.js"></script>
   </body>
 </html>

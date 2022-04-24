@@ -1,5 +1,6 @@
 import { authorAlias } from "./aliasing.js";
 import { getTagsFromPreset } from "./tag_presets.js";
+import { getPotentialRepost, IMAGES_URL } from "./repost_check.js";
 
 const SUBMISSION_URL = "https://furbooru.org/images/new";
 const POST_FIRST_ELEMENT = document.getElementById("post-first");
@@ -26,6 +27,8 @@ function displayURL(urlStr) {
 
 /**
  * Enable/disable the previous and next buttons.
+ * @param {Number} idx Current index
+ * @param {Number} length Total number of images.
  */
 function resetNextPrev(idx, length) {
   if (idx === 0) {
@@ -93,12 +96,14 @@ function handleError(e) {
  * Given the handler response, set any warnings which need to be set.
  */
 function dispatchWarnings(resp, promiseMetaProp) {
+  clearWarnings();
+  let ok = true;
   if (resp.listenerType == "universal") {
-    setWarning(
-      "Using Universal Extractor",
+    addTextWarning(
+      "Universal Extractor",
       "Some info may be missing or incorrect."
     );
-    return;
+    ok = false;
   }
 
   let hasRes = false;
@@ -108,35 +113,72 @@ function dispatchWarnings(resp, promiseMetaProp) {
       resp.images[promiseMetaProp.currentImgIdx].height === resObj.height;
   });
   if (resp.listenerType == "deviantart" && !hasRes) {
-    setWarning(
-      "DeviantArt Warning",
-      "FurAdder is not extracting the expected resolution. " +
-        "DeviantArt sometimes hides high-res files behind " +
+    addTextWarning(
+      "DeviantArt",
+      "Not extracting the expected resolution. " +
+        "DeviantArt may hide hi-res files behind " +
         "a download button. "
     );
-    return;
+    ok = false;
   }
-  clearWarning();
+  getPotentialRepost(getActiveImage(promiseMetaProp).fetchSrc)
+    .then((maybeRepost) => {
+      if (maybeRepost !== null) {
+        addRepostWarning("Repost Detected", `${maybeRepost.id}`);
+      } else if (ok) {
+        clearWarnings();
+      }
+      return Promise.resolve();
+    })
+    .catch((error) => {
+      console.error("Encountered an error looking up repost:", error);
+    });
 }
 
 /**
- *
+ * Add a generic warning.
+ * @param header Warning header. String.
+ * @param node HTML Node, contents to fill the body.
  */
-function setWarning(header, body) {
-  const warnElemHeader = document.getElementById("warning-container-header");
-  warnElemHeader.textContent = "\u26a0 " + header + " \u26a0";
-  const warnElemBody = document.getElementById("warning-container-body");
-  warnElemBody.textContent = body;
+function addWarning(header, node) {
+  const warnHeaderElem = document.createElement("p");
+  warnHeaderElem.setAttribute("class", "warning-container-header");
+  const warnHeaderText = document.createTextNode(header);
+  warnHeaderElem.appendChild(warnHeaderText);
+
+  const group = document.createElement("div");
+  group.appendChild(warnHeaderElem);
+  group.appendChild(node);
+  const warnElemContainer = document.getElementById("warning-container");
+  warnElemContainer.appendChild(group);
+}
+
+function addTextWarning(header, body) {
+  const warnBodyElem = document.createElement("p");
+  warnBodyElem.setAttribute("class", "warning-container-body");
+  warnBodyElem.appendChild(document.createTextNode(body));
+  addWarning(header, warnBodyElem);
+}
+
+function addRepostWarning(header, imageId) {
+  const warnBodyElem = document.createElement("a");
+  warnBodyElem.setAttribute("href", IMAGES_URL + imageId.toString());
+  warnBodyElem.setAttribute("target", "_blank");
+  warnBodyElem.setAttribute(
+    "class",
+    "warning-container-url warning-container-body"
+  );
+  warnBodyElem.appendChild(document.createTextNode(`ID# ${imageId}`));
+  addWarning(header, warnBodyElem);
 }
 
 /**
- *
+ * Remove all warnings in the warning container.
  */
-function clearWarning() {
-  const warnElemHeader = document.getElementById("warning-container-header");
-  warnElemHeader.textContent = "";
-  const warnElemBody = document.getElementById("warning-container-body");
-  warnElemBody.textContent = "";
+function clearWarnings() {
+  const warnElemHeader = document.getElementById("warning-container");
+  const children = warnElemHeader.childNodes;
+  children.forEach((x) => warnElemHeader.removeChild(x));
 }
 
 /**
@@ -192,7 +234,7 @@ function submit(postDataProp, promiseMetaProp) {
  */
 function updatePostDataPropFromMeta(postDataProp, promiseMetaProp) {
   resetNextPrev(promiseMetaProp.currentImgIdx, promiseMetaProp.imgItems.length);
-  const selectedImg = promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
+  const selectedImg = getActiveImage(promiseMetaProp);
   if (promiseMetaProp.fetchType === DIRECT_FETCH_TYPE) {
     displayRes(selectedImg.width, selectedImg.height);
   } else {
@@ -261,6 +303,9 @@ function failureCleanup(promiseMetaProp, _) {
   clearRes();
 }
 
+/*
+ * Reload the popup display content.
+ */
 function resetPopUp(promiseMetaProp, postDataProp) {
   // Display current page content. ---------------------------------------------
   const tabsCurrent = browser.tabs.query({ active: true, currentWindow: true });
@@ -333,6 +378,14 @@ function resetPopUp(promiseMetaProp, postDataProp) {
         });
     })
     .catch(handleError);
+}
+
+/**
+ * @param {.imgItems} promiseMetaProp 
+ * @returns The current image object.
+ */
+function getActiveImage(promiseMetaProp) {
+  return promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
 }
 
 function main() {

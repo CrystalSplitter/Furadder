@@ -6,6 +6,7 @@
   --button-default-color: #3a314e;
   --button-hover-color: #2e2744;
   --warning-color: #ff904e;
+  --url-color: #90fbff;
 }
 
 body {
@@ -14,7 +15,8 @@ body {
   background-color: var(--main-bg-color);
   padding: 0;
   margin: 0;
-  font-size: 12pt;
+  font-size: 9pt;
+  max-height: 590px;
 }
 
 h1 {
@@ -23,6 +25,7 @@ h1 {
   margin: 0;
   padding: 5px;
   text-align: center;
+  font-size: 16pt;
 }
 
 button,
@@ -61,7 +64,7 @@ select:hover {
 
 #thumb-container > img {
   max-width: 200px;
-  max-height: 150px;
+  max-height: 100px;
   display: block;
   margin: auto;
 }
@@ -94,16 +97,24 @@ select:hover {
 #warning-container {
   max-width: 300px;
   color: var(--warning-color);
-  font-style: italic;
-  font-size: 8pt;
+  font-size: 9pt;
 }
 
-#warning-container-header {
+.warning-container-header {
   font-weight: bold;
+  text-align: center;
+  background-color: var(--warning-color);
+  color: var(--main-bg-color);
 }
 
-#warning-container-body {
+.warning-container-body {
   margin: 0;
+}
+
+a.warning-container-url {
+  color: var(--url-color);
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 .fill-container {
