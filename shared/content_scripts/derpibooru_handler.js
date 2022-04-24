@@ -118,7 +118,7 @@
       case "BR":
         return "\n";
       case "BLOCKQUOTE":
-        return "[bq]" + onChildren(node.childNodes) + "[/bq]";
+        return "> " + onChildren(node.childNodes).replaceAll("\n", "\n> ");
       case "DIV":
         return onChildren(node.childNodes);
       default:
@@ -128,8 +128,8 @@
 
   /**
    * Transform extracted Derpi-tags.
-   * @param tags Array of raw extracted tags.
-   * @returns Transformed derpi tags for Furbooru.
+   * @param {string[]} tags Array of raw extracted tags.
+   * @returns {string[]} Transformed derpi tags for Furbooru.
    */
   function transformDerpiTags(tags) {
     return [...tags, "my little pony"];
