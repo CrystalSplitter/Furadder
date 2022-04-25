@@ -24,7 +24,8 @@
         "content_scripts/twitter_handler.js"
       ],
       "matches": [
-        "*://twitter.com/*"
+        "*://twitter.com/*",
+        "*://mobile.twitter.com/*"
       ]
     },
     {
@@ -62,6 +63,7 @@
     {
       "exclude_matches": [
         "*://twitter.com/*",
+        "*://mobile.twitter.com/*",
         "*://derpibooru.org/*",
         "*://furbooru.org/*",
         "*://www.deviantart.com/*",
