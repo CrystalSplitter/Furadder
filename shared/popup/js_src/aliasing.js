@@ -9,6 +9,7 @@ const TWITTER_TABLE = {
   selenophilensfw: "selenophile",
   selenophilesfw: "selenophile",
   southpauzart: "southpauz",
+  twiren_arts: "twiren",
 };
 const ALIAS_TABLES = {
   twitter: TWITTER_TABLE,
