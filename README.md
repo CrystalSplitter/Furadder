@@ -1,8 +1,14 @@
-# FurAdder
+# FurAdder ![Version Tag](https://img.shields.io/github/v/tag/CrystalSplitter/Furadder?label=latest%20tag) ![Chrome Badge](https://img.shields.io/chrome-web-store/v/hkipilhknmjcgipemfdgbeahoopaiaac) ![Firefox Badge](https://img.shields.io/amo/v/Furadder)
 
 A [furbooru.org](https://furbooru.org) image extractor and uploader.
 
 ![screenshot_v0.3](media/screenshot_v0.3.png)
+
+## Installation
+
+- [Chrome](https://chrome.google.com/webstore/detail/furadder/hkipilhknmjcgipemfdgbeahoopaiaac)
+
+- [Firefox](https://addons.mozilla.org/en-US/firefox/addon/furadder)
 
 ## Features
 
