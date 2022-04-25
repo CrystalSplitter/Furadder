@@ -22,6 +22,6 @@ bump-major:
 	./version_bump.py major
 
 prettier:
-	prettier -w shared chromium firefox
+	prettier -w shared chromium firefox README.md
 
 .PHONY: clean prepare build bump-minor bump-middle bump-major firefox
