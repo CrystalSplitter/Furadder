@@ -32,12 +32,12 @@ class Feedback {
   }
 }
 
-function consoleDebug(msg) {
-  console.debug("[FUR] " + msg);
+function consoleDebug(...msg) {
+  console.debug("[FUR]", ...msg);
 }
 
-function consoleError(msg) {
-  console.error("[FUR] " + msg);
+function consoleError(...msg) {
+  console.error("[FUR]", ...msg);
 }
 
 const MONTH_TO_NUM = {
