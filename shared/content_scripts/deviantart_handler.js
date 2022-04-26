@@ -44,13 +44,56 @@
   }
 
   function getDescription() {
-    const nodes = document.querySelectorAll("div.legacy-journal > span");
-    if (nodes.length === 2) {
-      return nodes[1].textContent;
-    } else if (nodes.length > 0) {
-      return nodes[0].textContent;
+    const legacyJournal = document.querySelectorAll("div.legacy-journal")[0];
+    const descBody = legacyJournal
+      ? escapeMarkdown(descrRecursiveHelper(legacyJournal, 0).trim())
+      : "";
+    const title = extractTitle();
+    const license = extractLicenseInfo();
+    if (license === "") {
+      return `__**${title}**__\n\n${descBody}`;
+    }
+    return `__**${title}**__\n\n${descBody}\n\n_${license}_`;
+  }
+
+  /**
+   * @param {Node} elem Recurse element target.
+   * @returns {string} Collected description.
+   */
+  function descrRecursiveHelper(elem) {
+    if (elem?.hasChildNodes()) {
+      return Array.from(elem?.childNodes).reduce((acc, child) => {
+        switch (child.nodeName) {
+          case "#text":
+            return acc + (child.nodeValue ?? "");
+          case "BR":
+            return acc + "\n";
+          case "DIV":
+            return acc + "\n" + descrRecursiveHelper(child);
+          default:
+            return acc + descrRecursiveHelper(child);
+        }
+      }, "");
     }
     return "";
+  }
+
+  /**
+   * @returns {string} The DeviantArt image title.
+   */
+  function extractTitle() {
+    return (
+      document.querySelector("[data-hook=deviation_title]")?.textContent ?? ""
+    );
+  }
+
+  /**
+   * @returns {string} The license info from the page.
+   */
+  function extractLicenseInfo() {
+    // This class name may change through obfuscation.
+    const license = document.querySelector("a[rel*='license']");
+    return license?.textContent ?? "";
   }
 
   function listener(request) {

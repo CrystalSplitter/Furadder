@@ -99,7 +99,11 @@
     return descrRecursiveHelper(descElem);
   }
 
-  function descrRecursiveHelper(node) {
+  /**
+   * @param {Element} elem Recurse element target.
+   * @returns {string} Combined string description for the elem.
+   */
+  function descrRecursiveHelper(elem) {
     const onChildren = (childNs) => {
       let inner = "";
       childNs.forEach((child) => {
@@ -108,19 +112,19 @@
       return inner;
     };
 
-    switch (node.nodeName) {
+    switch (elem.nodeName) {
       case "#text":
-        if (node.nodeValue == null) {
+        if (elem.nodeValue == null) {
           return "";
         } else {
-          return node.nodeValue;
+          return elem.nodeValue;
         }
       case "BR":
         return "\n";
       case "BLOCKQUOTE":
-        return "> " + onChildren(node.childNodes).replaceAll("\n", "\n> ");
+        return "> " + onChildren(elem.childNodes).replaceAll("\n", "\n> ");
       case "DIV":
-        return onChildren(node.childNodes);
+        return onChildren(elem.childNodes);
       default:
         return "";
     }

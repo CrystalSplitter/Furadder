@@ -116,6 +116,9 @@ function newImageObject(props) {
 
 /**
  * Compare sizes of images.
+ * @param {{naturalHeight, naturalWidth}} img1 Image object 1.
+ * @param {{naturalHeight, naturalWidth}} img2 Image object 2.
+ * @returns {number} Comparator number.
  */
 function sizeCompare(img1, img2) {
   const pixCount1 = img1.naturalWidth * img1.naturalHeight;
@@ -143,7 +146,7 @@ function parseDateString(s, lang) {
  * Retrieve a list of images from the page, sorted by size in
  * descending order.
  *
- * @param general Boolean. Use the general fetch option.
+ * @param {boolean} general Use the general fetch option.
  */
 function genericImageExtractor(general) {
   const arr = Array.from(document.images);
@@ -161,8 +164,10 @@ function genericImageExtractor(general) {
 
 /**
  * Escape potential markdown text.
+ * @param {string} s Input string.
+ * @returns {string} Escaped string.
  */
-function escape_markdown(s) {
+function escapeMarkdown(s) {
   return s
     .replaceAll("*", "\\*")
     .replaceAll("-", "\\-")

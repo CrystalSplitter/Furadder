@@ -105,7 +105,7 @@
       consoleError("Unable to find firstChild for description.");
       return "";
     }
-    return description.innerText;
+    return escapeMarkdown(description.innerText);
   }
 
   /**

@@ -30,10 +30,7 @@
     const elem = document.querySelector(
       ".section-body > .submission-description"
     );
-    if (elem === null) {
-      return "";
-    }
-    return elem.textContent.trim();
+    return elem ? escapeMarkdown(elem.textContent.trim()) : "";
   }
 
   function listener(request) {
