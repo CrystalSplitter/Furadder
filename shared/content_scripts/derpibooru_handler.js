@@ -36,7 +36,7 @@
   function getSourceLink() {
     const src = document.querySelector(
       "#image-source > p > a.js-source-link"
-    ).textContent;
+    )?.textContent;
     if (src === null) {
       return document.location.href;
     }
