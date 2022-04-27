@@ -104,30 +104,23 @@
    * @returns {string} Combined string description for the elem.
    */
   function descrRecursiveHelper(elem) {
-    const onChildren = (childNs) => {
-      let inner = "";
-      childNs.forEach((child) => {
-        inner += descrRecursiveHelper(child);
-      });
-      return inner;
-    };
-
-    switch (elem.nodeName) {
-      case "#text":
-        if (elem.nodeValue == null) {
-          return "";
-        } else {
-          return elem.nodeValue;
+    if (elem?.hasChildNodes()) {
+      return Array.from(elem?.childNodes).reduce((acc, child) => {
+        switch (child.nodeName) {
+          case "#text":
+            return acc + (child.nodeValue ?? "");
+          case "BR":
+            return acc + "\n";
+          case "BLOCKQUOTE":
+            return "> " + descrRecursiveHelper(elem.childNodes).replaceAll("\n", "\n> ");
+          case "DIV":
+            return acc + "\n" + descrRecursiveHelper(child);
+          default:
+            return acc + descrRecursiveHelper(child);
         }
-      case "BR":
-        return "\n";
-      case "BLOCKQUOTE":
-        return "> " + onChildren(elem.childNodes).replaceAll("\n", "\n> ");
-      case "DIV":
-        return onChildren(elem.childNodes);
-      default:
-        return "";
+      }, "");
     }
+    return "";
   }
 
   /**
