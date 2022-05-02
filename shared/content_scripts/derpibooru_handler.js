@@ -37,7 +37,7 @@
     const src = document.querySelector(
       "#image-source > p > a.js-source-link"
     )?.textContent;
-    if (src === null) {
+    if (src == null) {
       return document.location.href;
     }
     return src;
@@ -107,14 +107,42 @@
     if (elem?.hasChildNodes()) {
       return Array.from(elem?.childNodes).reduce((acc, child) => {
         switch (child.nodeName) {
-          case "#text":
+          case "#text": // (Raw) text
             return acc + (child.nodeValue ?? "");
-          case "BR":
-            return acc + "\n";
-          case "BLOCKQUOTE":
-            return "> " + descrRecursiveHelper(elem.childNodes).replaceAll("\n", "\n> ");
-          case "DIV":
+          case "A": // Hyperlinks 
+            return acc + "[" + descrRecursiveHelper(child) + "](" + child.href + ")";
+          case "BR": // Newlines
+            return acc + "";
+          case "BLOCKQUOTE": // Block quotes
+            return acc + "> " + descrRecursiveHelper(child).replaceAll("\n", "\n> ");
+          case "CODE": // Code
+            return acc + "`" + descrRecursiveHelper(child) + "`";
+          case "DEL": // Strikethrough
+            return acc + "~~" + descrRecursiveHelper(child) + "~~";
+          case "DIV": // Paragraph
             return acc + "\n" + descrRecursiveHelper(child);
+          case "EM": // Italics
+            return acc + "*" + descrRecursiveHelper(child) + "*";
+		  case "IMG": // Embedded image
+		    return acc + (child.src ?? "");
+          case "INS": // Underline
+            return acc + "__" + descrRecursiveHelper(child) + "__";
+          case "LI": // List element
+            return acc + "* " + descrRecursiveHelper(child);
+          case "STRONG": // Bold
+            return acc + "**" + descrRecursiveHelper(child) + "**";
+          case "UL": // Unordered list
+            return acc + descrRecursiveHelper(child);
+          case "SPAN": {
+            if (child.className === "spoiler") {
+              // Text spoiler
+              return acc + "||" + descrRecursiveHelper(child) + "||";
+            } else if (child.className === "imgspoiler") {
+			  // Image spoiler
+			  return acc + "![](" + descrRecursiveHelper(child) + ")";
+			}
+            return acc + "";
+          }
           default:
             return acc + descrRecursiveHelper(child);
         }
