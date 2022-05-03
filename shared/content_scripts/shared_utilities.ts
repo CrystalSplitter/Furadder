@@ -1,8 +1,23 @@
+interface Request {
+  command: string,
+  data?: any,
+}
+
 /**
  * The message to send back to the extension from a content script.
  */
 class Feedback {
-  constructor(args) {
+  listenerType: string;
+  images: any[];
+  description: string;
+  sourceLink: string;
+  expectedIdx: number;
+  extractedTags: string[];
+  expectedResolutions: any[];
+  autoquote: boolean;
+  authors: string[];
+
+  constructor(args: any) {
     this.listenerType = args.listenerType;
     this.images = args.images === undefined ? [] : args.images;
     this.description = args.description === undefined ? null : args.description;
@@ -32,15 +47,15 @@ class Feedback {
   }
 }
 
-function consoleDebug(...msg) {
+function consoleDebug(...msg: any[]) {
   console.debug("[FUR]", ...msg);
 }
 
-function consoleError(...msg) {
+function consoleError(...msg: any[]) {
   console.error("[FUR]", ...msg);
 }
 
-const MONTH_TO_NUM = {
+const MONTH_TO_NUM: {[key: string]: number} = {
   jan: 1,
   feb: 2,
   mar: 3,
@@ -55,33 +70,39 @@ const MONTH_TO_NUM = {
   dec: 12,
 };
 
-const enUSLangYearFunc = (s) => {
+interface Year {
+  year: number;
+  month: number;
+  day: number;
+}
+
+function enUSLangYearFunc(s: string): Year | null {
   const re = /([A-Z][a-z]+)\s+([0-9]?[0-9]),\s+([0-9]+)/;
   const found = s.match(re);
-  if (found && MONTH_TO_NUM[found[1].toLowerCase()]) {
+  if (found && MONTH_TO_NUM[found[1].toLowerCase()] != null) {
     return {
       day: parseInt(found[2]),
-      month: parseInt(MONTH_TO_NUM[found[1].toLowerCase()]),
+      month: MONTH_TO_NUM[found[1].toLowerCase()],
       year: parseInt(found[3]),
     };
   }
   return null;
-};
+}
 
-const enGBLangYearFunc = (s) => {
+function enGBLangYearFunc(s: string): Year | null {
   const re = /([0-9]?[0-9]),?\s+([A-Z][a-z]+),?\s+([0-9]+)/;
   const found = s.match(re);
-  if (found && MONTH_TO_NUM[found[2].toLowerCase()]) {
+  if (found && MONTH_TO_NUM[found[2].toLowerCase()] != null) {
     return {
       day: parseInt(found[1]),
-      month: parseInt(MONTH_TO_NUM[found[2].toLowerCase()]),
+      month: MONTH_TO_NUM[found[2].toLowerCase()],
       year: parseInt(found[3]),
     };
   }
   return null;
-};
+}
 
-const isoYearFunc = (s) => {
+function isoYearFunc(s: string): Year | null {
   const re = /([0-9]+)-([0-9][0-9])-([0-9]+)/;
   const found = s.match(re);
   if (found) {
@@ -92,7 +113,7 @@ const isoYearFunc = (s) => {
     };
   }
   return null;
-};
+}
 
 const LANGUAGE_YEAR_MAPPINGS = {
   en: enUSLangYearFunc,
@@ -100,7 +121,15 @@ const LANGUAGE_YEAR_MAPPINGS = {
   "en-GB": enGBLangYearFunc,
 };
 
-function newImageObject(props) {
+interface ImageObj {
+  src: string | null;
+  width: number;
+  height: number;
+  fetchSrc?: string | null;
+  lazyLoad: boolean;
+}
+
+function newImageObject(props: Partial<ImageObj>): ImageObj {
   return {
     // Define defaults
     src: null,
@@ -116,11 +145,11 @@ function newImageObject(props) {
 
 /**
  * Compare sizes of images.
- * @param {{naturalHeight, naturalWidth}} img1 Image object 1.
- * @param {{naturalHeight, naturalWidth}} img2 Image object 2.
+ * @param {HTMLImageElement} img1 Image object 1.
+ * @param {HTMLImageElement} img2 Image object 2.
  * @returns {number} Comparator number.
  */
-function sizeCompare(img1, img2) {
+function sizeCompare(img1: HTMLImageElement, img2: HTMLImageElement): number {
   const pixCount1 = img1.naturalWidth * img1.naturalHeight;
   const pixCount2 = img2.naturalWidth * img2.naturalHeight;
   if (pixCount1 < pixCount2) {
@@ -133,9 +162,20 @@ function sizeCompare(img1, img2) {
 }
 
 /**
- *
+ * Browser language types.
  */
-function parseDateString(s, lang) {
+type Lang =
+  | "en"
+  | "en-US"
+  | "en-GB";
+
+/**
+ * Parse a date string using a region format.
+ * @param {string} s Date string
+ * @param {string} lang Language format (like en-US)
+ * @returns {Year | null} The corresponding year object, or null.
+ */
+function parseDateString(s: string, lang: Lang): Year | null {
   if (LANGUAGE_YEAR_MAPPINGS[lang] === undefined) {
     return isoYearFunc(s);
   }
@@ -148,7 +188,7 @@ function parseDateString(s, lang) {
  *
  * @param {boolean} general Use the general fetch option.
  */
-function genericImageExtractor(general) {
+function genericImageExtractor(general: boolean): ImageObj[] {
   const arr = Array.from(document.images);
   arr.sort(sizeCompare).reverse();
   const imgObjs = arr.map((x) =>
@@ -167,7 +207,7 @@ function genericImageExtractor(general) {
  * @param {string} s Input string.
  * @returns {string} Escaped string.
  */
-function escapeMarkdown(s) {
+function escapeMarkdown(s: string): string {
   return s
     .replaceAll("*", "\\*")
     .replaceAll("-", "\\-")

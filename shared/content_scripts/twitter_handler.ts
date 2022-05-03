@@ -1,10 +1,13 @@
 "use strict";
 
+// Needed for typescript to recognise this as imported.
+declare var browser: any;
+
 (() => {
   const SRC_STRING = "https://pbs.twimg.com/media/";
   const INFO_IDX = 2;
 
-  function directTwitterHandler() {
+  function directTwitterHandler(): ImageObj[] {
     return filterScrapedImages(SRC_STRING).map((x) => {
       return newImageObject({
         src: x.src,
@@ -14,7 +17,7 @@
     });
   }
 
-  function furbooruFetchTwitterHandler() {
+  function furbooruFetchTwitterHandler(): ImageObj[] {
     return filterScrapedImages(SRC_STRING).map((x) => {
       return newImageObject({
         src: x.src,
@@ -28,7 +31,7 @@
   /**
    * Scrape and filter all images on the webpage based on the provided substring.
    */
-  function filterScrapedImages(substringToCheck) {
+  function filterScrapedImages(substringToCheck: string): HTMLImageElement[] {
     const scrapedImages = Array.from(document.images);
     const filteredImages = scrapedImages.filter((imgElem) => {
       return imgElem.src.includes(substringToCheck);
@@ -39,7 +42,8 @@
   /**
    * Return the index of the image we're looking at right now.
    */
-  function getImgIdx(url) {
+
+  function getImgIdx(url: string): number {
     const xs = url.toString().split("/");
     if (xs.length > 2 && xs[xs.length - 2] === "photo") {
       return parseInt(xs[xs.length - 1]) - 1;
@@ -50,7 +54,7 @@
   /**
    * Return the container element of the description content and tweet info.
    */
-  function getDescriptionContainer() {
+  function getDescriptionContainer(): Element | null {
     return document.querySelector("article > div > div > div > :last-child");
   }
 
@@ -58,10 +62,10 @@
    * Return the year of posting.
    * @returns The year of posting as an integer, or `null` if not found.
    */
-  function getYear() {
+  function getYear(): number | null {
     const htmlElem = document.querySelector("html");
     if (htmlElem == null) return null;
-    const lang = htmlElem.getAttribute("lang");
+    const lang: Lang | null = htmlElem.getAttribute("lang") as Lang;
     if (lang == null) return null;
     const descriptionContainer = getDescriptionContainer();
     if (descriptionContainer == null) {
@@ -74,6 +78,7 @@
       return null;
     }
     const infoStr = infoElem.textContent;
+    if (infoStr == null) return null;
     const date = parseDateString(infoStr, lang);
     if (date == null) return null;
     return date.year;
@@ -82,8 +87,8 @@
   /**
    *
    */
-  function getTags() {
-    const output = [];
+  function getTags(): string[] {
+    const output: string[] = [];
     const year = getYear();
     if (year != null) {
       output.push(year.toString());
@@ -94,7 +99,7 @@
   /**
    * Return the textual content of the tweet.
    */
-  function getDescription() {
+  function getDescription(): string {
     const descriptionContainer = getDescriptionContainer();
     if (descriptionContainer == null) {
       consoleError("Unable to find descriptionContainer.");
@@ -105,7 +110,11 @@
       consoleError("Unable to find firstChild for description.");
       return "";
     }
-    return escapeMarkdown(description.innerText);
+    if (description.textContent == null) {
+      consoleError("Unable to get description textContent");
+      return "";
+    }
+    return escapeMarkdown(description.textContent);
   }
 
   /**
@@ -120,7 +129,7 @@
     return "";
   }
 
-  function listener(request) {
+  function listener(request: Request) {
     const { command, data } = request;
     if (command === "contentExtractData") {
       switch (data.fetchType) {

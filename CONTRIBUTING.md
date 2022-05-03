@@ -7,7 +7,7 @@ community.
 
 ## Code of Conduct
 
-> *This is a slightly simplified version of the Contributor Covenant Code of Conduct (see Attribution)*
+> _This is a slightly simplified version of the Contributor Covenant Code of Conduct (see Attribution)_
 
 We as contributors promise to make this repository a
 welcoming and inclusive space for everyone, regardless of age, body, visible
@@ -18,19 +18,19 @@ orientation.
 
 We as a contributor are expected to:
 
-* Show empathy and kindness to others
-* Be respectful of differing opinions and experiences,
-* Give and gracefully accep feedback
-* Respect artist wishes at all times (particularly in regards to distribution terms and conditions)
-* Focusing on what is best not just for us as individuals, but for the overall community
+- Show empathy and kindness to others
+- Be respectful of differing opinions and experiences,
+- Give and gracefully accep feedback
+- Respect artist wishes at all times (particularly in regards to distribution terms and conditions)
+- Focusing on what is best not just for us as individuals, but for the overall community
 
 Examples of unacceptable behavior include:
 
-* The use of sexualized language or imagery, and sexual attention or advances of any kind (outside of direct usage of this project, as sexual content is inherent in the art world)
-* Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others’ private information, such as a physical address or email address, without their explicit permission
-* Other conduct which could reasonably be considered inappropriate in a professional setting
+- The use of sexualized language or imagery, and sexual attention or advances of any kind (outside of direct usage of this project, as sexual content is inherent in the art world)
+- Trolling, insulting or derogatory comments, and personal or political attacks
+- Public or private harassment
+- Publishing others’ private information, such as a physical address or email address, without their explicit permission
+- Other conduct which could reasonably be considered inappropriate in a professional setting
 
 ## Enforcement
 
