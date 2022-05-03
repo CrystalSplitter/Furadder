@@ -9,7 +9,7 @@
     const matches = document
       .querySelector("main")
       .innerText.match("([0-9]+)x([0-9]+)px");
-    if (matches.length === 3) {
+    if (matches != null && matches.length === 3) {
       return {
         width: parseInt(matches[1]),
         height: parseInt(matches[2]),
@@ -20,7 +20,7 @@
 
   function getArtists() {
     const elem = document.querySelector(".submission-id-sub-container > a");
-    if (elem === null) {
+    if (elem == null) {
       return [];
     }
     return [elem.textContent];

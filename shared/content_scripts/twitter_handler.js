@@ -113,7 +113,7 @@
    */
   function getTwitterHandle() {
     const splits = document.location.href.split("/");
-    if (splits.length >= 4) {
+    if (splits != null && splits.length >= 4) {
       return splits[3];
     }
     consoleError("Unable to get twitter handle.");

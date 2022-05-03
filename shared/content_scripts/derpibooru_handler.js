@@ -22,7 +22,7 @@
    */
   function getViewURL() {
     const hrefElem = document.querySelector("a[title~=View]");
-    if (hrefElem === null) {
+    if (hrefElem == null) {
       consoleError("Unable to find view link");
       return null;
     }
@@ -59,7 +59,7 @@
    * Return the list of artist names.
    */
   function getArtists() {
-    if (TAG_LIST === null) {
+    if (TAG_LIST == null) {
       return [];
     }
     let arr = [];
@@ -78,16 +78,20 @@
    * Extract tags from Derpibooru and return them as an Array of Strings.
    */
   function getDerpiTags() {
-    if (TAG_LIST === null) {
+    if (TAG_LIST == null) {
       return [];
     }
     let arr = [];
-    for (let i = 0; i < TAG_LIST.childNodes.length; i++) {
-      const tag = TAG_LIST.childNodes[i].getAttribute("data-tag-name");
+    TAG_LIST.childNodes.forEach((child) => {
+      const tag = child.getAttribute("data-tag-name");
+      if (tag == null) {
+        consoleError("Couldn't get 'data-tag-name' for", tag);
+        return;
+      }
       if (!tag.startsWith("artist:")) {
         arr.push(tag);
       }
-    }
+    });
     return arr;
   }
 
