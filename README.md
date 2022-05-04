@@ -34,9 +34,18 @@ universal extractor whenever a site is not intelligently supported.
 
 ## Build Instructions
 
+Building this package now requires `npm`.
+
 ```bash
 git clone https://github.com/CrystalSplitter/Furadder furadder && cd furadder
-make  # This generates the actual source in build/
+npm install
+npm run build-ext
+```
+
+To clean the build, run:
+
+```bash
+npm run clean
 ```
 
 ## Contributing
