@@ -34,7 +34,7 @@ universal extractor whenever a site is not intelligently supported.
 
 ## Build Instructions
 
-Building this package now requires `npm`.
+Building this package requires `npm`, `bash` and 7zip (via `7z` in your $PATH).
 
 ```bash
 git clone https://github.com/CrystalSplitter/Furadder furadder && cd furadder

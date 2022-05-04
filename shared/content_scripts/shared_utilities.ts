@@ -1,6 +1,6 @@
 interface Request {
-  command: string,
-  data?: any,
+  command: string;
+  data?: any;
 }
 
 /**
@@ -55,7 +55,7 @@ function consoleError(...msg: any[]) {
   console.error("[FUR]", ...msg);
 }
 
-const MONTH_TO_NUM: {[key: string]: number} = {
+const MONTH_TO_NUM: { [key: string]: number } = {
   jan: 1,
   feb: 2,
   mar: 3,
@@ -164,10 +164,7 @@ function sizeCompare(img1: HTMLImageElement, img2: HTMLImageElement): number {
 /**
  * Browser language types.
  */
-type Lang =
-  | "en"
-  | "en-US"
-  | "en-GB";
+type Lang = "en" | "en-US" | "en-GB";
 
 /**
  * Parse a date string using a region format.
