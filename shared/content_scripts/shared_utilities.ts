@@ -1,6 +1,6 @@
 interface Request {
   command: string;
-  data?: any;
+  data: any;
 }
 
 /**

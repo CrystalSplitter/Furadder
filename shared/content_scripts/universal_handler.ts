@@ -1,7 +1,7 @@
-"use strict";
+//declare var browser: any;
 
 (() => {
-  function listener(request) {
+  function listener(request: Request): Promise<Feedback | string> {
     const { command, data } = request;
     if (command === "contentExtractData") {
       switch (data.fetchType) {
