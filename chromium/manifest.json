@@ -87,7 +87,7 @@
   "permissions": [
     "tabs"
   ],
-  "version": "0.4.2",
+  "version": "0.5.0",
   "web_accessible_resources": [
     {
       "matches": [
