@@ -10,6 +10,7 @@ for target in chromium firefox; do
   mkdir -p "${TARGET_DIR}/${target}" || true
   cp -ru "${SHARED_SRC}"/* "${TARGET_DIR}/${target}"
   cp -ru "${target}" "${TARGET_DIR}/"
+  cp -u "tsconfig.json" "${TARGET_DIR}/${target}"
   mkdir -p "${TARGET_DIR}/${target}/background_scripts/third_party" || true
   mkdir -p "${TARGET_DIR}/${target}/popup/third_party" || true
   mkdir -p "${TARGET_DIR}/${target}/content_scripts/third_party" || true
