@@ -13,7 +13,7 @@ class Feedback {
   sourceLink: string;
   expectedIdx: number;
   extractedTags: string[];
-  expectedResolutions: any[];
+  expectedResolutions: Resolution[];
   autoquote: boolean;
   authors: string[];
 

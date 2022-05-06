@@ -41,3 +41,11 @@ interface PostDataProperty {
   sourceURLStr: string;
   tags: string[];
 }
+
+/**
+ * Image resolution.
+ */
+interface Resolution {
+  width: number;
+  height: number;
+}
