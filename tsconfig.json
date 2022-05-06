@@ -5,7 +5,8 @@
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "strict": true
+    "strict": true,
+    "target": "es2021"
   },
   "target": "es2021",
   "exclude": ["build"]

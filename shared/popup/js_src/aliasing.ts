@@ -1,6 +1,6 @@
 "use strict";
 
-const TWITTER_TABLE = {
+const TWITTER_TABLE: { [key: string]: string } = {
   alumx_mlp: "alumx",
   dawnf1re: "dawnfire",
   itssugarmorning: "sugar morning",
@@ -11,14 +11,14 @@ const TWITTER_TABLE = {
   southpauzart: "southpauz",
   twiren_arts: "twiren",
 };
-const ALIAS_TABLES = {
+const ALIAS_TABLES: { [key: string]: { [k: string]: string } } = {
   twitter: TWITTER_TABLE,
 };
 
 /**
  * Return the reduced alias author name.
  */
-export function authorAlias(aliasTableName, authorName) {
+export function authorAlias(aliasTableName: string, authorName: string) {
   const table = ALIAS_TABLES[aliasTableName];
   if (!table) {
     return authorName;

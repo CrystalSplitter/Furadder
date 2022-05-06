@@ -121,14 +121,6 @@ const LANGUAGE_YEAR_MAPPINGS = {
   "en-GB": enGBLangYearFunc,
 };
 
-interface ImageObj {
-  src: string | null;
-  width: number;
-  height: number;
-  fetchSrc?: string | null;
-  lazyLoad: boolean;
-}
-
 function newImageObject(props: Partial<ImageObj>): ImageObj {
   return {
     // Define defaults

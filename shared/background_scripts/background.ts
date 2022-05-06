@@ -1,10 +1,5 @@
 "use strict";
 
-interface Request {
-  command: string;
-  data: any;
-}
-
 declare var importScripts: (arg: string) => void;
 
 try {
@@ -108,7 +103,7 @@ function createSubmissionTab<T>(urlStr: string, postData: T) {
  * @returns A resolved promise, carrying an Object with boolean
  *  field "success".
  */
-function listener(request: Request) {
+function listener(request: BackgroundRequest): Promise<{ success: boolean }> {
   if (request.command === "createSubmissionTab") {
     createSubmissionTab(request.data.urlStr, request.data.postData);
     return Promise.resolve({ success: true });

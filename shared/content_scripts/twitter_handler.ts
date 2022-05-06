@@ -124,7 +124,7 @@
     return "";
   }
 
-  function listener(request: Request) {
+  function listener(request: ExtractorRequest): Promise<Feedback> {
     const { command, data } = request;
     if (command === "contentExtractData") {
       switch (data.fetchType) {
