@@ -8,6 +8,11 @@ interface BackgroundRequest {
   data: any;
 }
 
+interface SubmissionRequest {
+  command: string;
+  data: PostDataProperty;
+}
+
 interface ExtractorResponse {
   expectedIdx: number;
 }
@@ -24,4 +29,15 @@ interface Year {
   year: number;
   month: number;
   day: number;
+}
+
+/**
+ * Holds information meant to be sent to submission page
+ */
+interface PostDataProperty {
+  autoquote: boolean;
+  description: string;
+  fetchURLStr: string;
+  sourceURLStr: string;
+  tags: string[];
 }

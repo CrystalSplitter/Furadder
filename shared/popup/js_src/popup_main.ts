@@ -38,17 +38,6 @@ interface MetaProperty {
   tagPreset: string[];
 }
 
-/**
- * Holds information meant to be sent to submission page
- */
-interface PostDataProperty {
-  autoquote: boolean;
-  description: string;
-  fetchURLStr: string;
-  sourceURLStr: string;
-  tags: string[];
-}
-
 async function extractData(tabId: number, data: any): Promise<Feedback> {
   return browser.tabs.sendMessage(tabId, {
     command: "contentExtractData",

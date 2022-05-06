@@ -4,7 +4,7 @@
    * @param urlStr The URL string to set.
    * @returns true if successful.
    */
-  function setFetchURL(urlStr: string) {
+  function setFetchURL(urlStr: string): boolean {
     const elem = document.getElementById("image_scraper_url");
     if (elem == null || !(elem instanceof HTMLInputElement)) {
       consoleError("Unable to set image_scraper_url");
@@ -19,7 +19,7 @@
    * Set the source string on the submission page.
    * @param urlStr The source string to set.
    */
-  function setSourceURL(urlStr: string) {
+  function setSourceURL(urlStr: string): boolean {
     const elem = document.getElementById("image_source_url");
     if (elem == null || !(elem instanceof HTMLInputElement)) {
       consoleError("Unable to set image_source_url");
@@ -32,7 +32,7 @@
   /**
    * Set the description field on the submission page.
    */
-  function setDescription(desc: string, autoquote = true) {
+  function setDescription(desc: string, autoquote = true): boolean {
     const elem = document.getElementById("image_description");
     if (
       elem == null ||
@@ -54,7 +54,7 @@
   /**
    * Add an array of tags to the submission list.
    */
-  function appendTags(tagArray: string[]) {
+  function appendTags(tagArray: string[]): boolean {
     const elem = document.getElementById("image_tag_input");
     if (
       elem == null ||
@@ -77,7 +77,7 @@
   /**
    * Fetch the actual image via Furbooru's fetch button.
    */
-  function callFetch() {
+  function callFetch(): boolean {
     const elem = document.getElementById("js-scraper-preview");
     if (elem != null && elem instanceof HTMLButtonElement) {
       elem.click();
@@ -90,7 +90,9 @@
   /**
    * Local listener injected into the page.
    */
-  function listener(request: Request) {
+  function listener(
+    request: SubmissionRequest
+  ): Promise<{ success: boolean } | { isError: boolean; message: string }> {
     if (request.command === "contentFurbooruFetch") {
       const setFetchSuccess = setFetchURL(request.data.fetchURLStr);
       const setSourceSuccess = setSourceURL(request.data.sourceURLStr);
