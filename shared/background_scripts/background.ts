@@ -1,5 +1,7 @@
 "use strict";
 
+declare var importScripts: (arg: string) => void;
+
 try {
   if (importScripts) {
     importScripts("background_scripts/third_party/browser-polyfill.min.js");
@@ -18,7 +20,7 @@ const BOORU_FILL_COMMAND = "contentFurbooruFetch";
  * @param {Promise<T>} promise Promise to wrap and return.
  * @returns {Promise<any>} New promise, but with a timeout
  */
-function promiseTimeout(ms, promise) {
+function promiseTimeout<T>(ms: number, promise: Promise<T>): Promise<unknown> {
   return Promise.race([
     promise,
     new Promise((_, reject) => {
@@ -35,7 +37,7 @@ function promiseTimeout(ms, promise) {
  * If it fails to fill the submission, it will try again
  * until it's tried MAX_FILL_RETRIES number of times.
  */
-function booruFill(tabId, postData) {
+function booruFill<T>(tabId: number, postData: T) {
   const contentMsg = {
     command: BOORU_FILL_COMMAND,
     data: postData,
@@ -51,12 +53,12 @@ function booruFill(tabId, postData) {
         SUBMISSION_TAB_TIMEOUT,
         browser.tabs.sendMessage(tabId, contentMsg)
       )
-        .then((resp) => {
+        .then((resp: any) => {
           if (!resp.success) {
             caller();
           }
         })
-        .catch((e) => {
+        .catch((e: any) => {
           if (
             e.isTimeout ||
             (e.message && e.message.includes("Receiving end does not exist"))
@@ -77,15 +79,16 @@ function booruFill(tabId, postData) {
  * @param {string} urlStr String URL to create a new tab at.
  * @param postData Metadata to attach to the booru post.
  */
-function createSubmissionTab(urlStr, postData) {
-  let tabId = null;
+function createSubmissionTab<T>(urlStr: string, postData: T) {
   browser.tabs
     .create({ url: urlStr })
-    .then((resp) => {
-      tabId = resp.id;
-      booruFill(tabId, postData);
+    .then((resp: browser.tabs.Tab) => {
+      const tabId = resp.id;
+      if (tabId !== undefined) {
+        booruFill(tabId, postData);
+      }
     })
-    .catch((err) => {
+    .catch((err: any) => {
       console.error("Unable to send submission message.", err);
     });
 }
@@ -100,7 +103,7 @@ function createSubmissionTab(urlStr, postData) {
  * @returns A resolved promise, carrying an Object with boolean
  *  field "success".
  */
-function listener(request) {
+function listener(request: BackgroundRequest): Promise<{ success: boolean }> {
   if (request.command === "createSubmissionTab") {
     createSubmissionTab(request.data.urlStr, request.data.postData);
     return Promise.resolve({ success: true });

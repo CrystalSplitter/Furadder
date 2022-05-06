@@ -1,6 +1,6 @@
 interface Request {
   command: string;
-  data?: any;
+  data: any;
 }
 
 /**
@@ -13,7 +13,7 @@ class Feedback {
   sourceLink: string;
   expectedIdx: number;
   extractedTags: string[];
-  expectedResolutions: any[];
+  expectedResolutions: Resolution[];
   autoquote: boolean;
   authors: string[];
 
@@ -120,14 +120,6 @@ const LANGUAGE_YEAR_MAPPINGS = {
   "en-US": enUSLangYearFunc,
   "en-GB": enGBLangYearFunc,
 };
-
-interface ImageObj {
-  src: string | null;
-  width: number;
-  height: number;
-  fetchSrc?: string | null;
-  lazyLoad: boolean;
-}
 
 function newImageObject(props: Partial<ImageObj>): ImageObj {
   return {

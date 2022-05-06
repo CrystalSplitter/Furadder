@@ -3,34 +3,63 @@ import { getTagsFromPreset } from "./tag_presets.js";
 import { getPotentialRepost, IMAGES_URL } from "./repost_check.js";
 
 const SUBMISSION_URL = "https://furbooru.org/images/new";
-const POST_FIRST_ELEMENT = document.getElementById("post-first");
-const NEXT_IMAGE_BUTTON = document.getElementById("next-image-button");
-const PREV_IMAGE_BUTTON = document.getElementById("prev-image-button");
-const RESOLUTION_ELEM = document.getElementById("resolution");
+const POST_FIRST_ELEMENT = document.getElementById("post-first") as HTMLElement;
+const NEXT_IMAGE_BUTTON = document.getElementById(
+  "next-image-button"
+) as HTMLButtonElement;
+const PREV_IMAGE_BUTTON = document.getElementById(
+  "prev-image-button"
+) as HTMLButtonElement;
+const RESOLUTION_ELEM = document.getElementById("resolution") as HTMLElement;
+const THUMB_CONTAINER_ELEM = document.getElementById(
+  "thumb-container"
+) as HTMLElement;
+const TAG_PRESETS_ELEM = document.getElementById(
+  "tag-presets"
+) as HTMLSelectElement;
+const RATINGS_ELEM = document.getElementById(
+  "tag-presets"
+) as HTMLSelectElement;
+const FURBOORU_FETCH_ELEM = document.getElementById(
+  "furbooru-fetch-input"
+) as HTMLInputElement;
 
 const DIRECT_FETCH_TYPE = "direct";
 const GENERAL_FETCH_TYPE = "general";
 
-async function extractData(tabId, data) {
+/**
+ * Holds current state of the PopUp Page.
+ */
+interface MetaProperty {
+  currentImgIdx: number;
+  fetchType: "direct" | "general";
+  imgItems: ImageObj[];
+  manualIdx: boolean;
+  tagPreset: string[];
+}
+
+async function extractData(tabId: number, data: any): Promise<Feedback> {
   return browser.tabs.sendMessage(tabId, {
     command: "contentExtractData",
     data: data,
   });
 }
 
-function displayURL(urlStr) {
+function displayURL(urlStr: string) {
   const urlObj = new URL(urlStr);
-  const elem = document.getElementById("site-detector-container");
+  const elem = document.getElementById(
+    "site-detector-container"
+  ) as HTMLElement;
   elem.textContent = "";
   elem.appendChild(document.createTextNode(urlObj.host));
 }
 
 /**
  * Enable/disable the previous and next buttons.
- * @param {Number} idx Current index
- * @param {Number} length Total number of images.
+ * @param {number} idx Current index
+ * @param {number} length Total number of images.
  */
-function resetNextPrev(idx, length) {
+function resetNextPrev(idx: number, length: number) {
   if (idx === 0) {
     PREV_IMAGE_BUTTON.disabled = true;
   } else {
@@ -43,21 +72,23 @@ function resetNextPrev(idx, length) {
   }
 }
 
-function displaySelectedImg(imgItem) {
-  const img = new Image();
-  img.src = imgItem.src;
-  clearImgDisplay();
-  const elem = document.getElementById("thumb-container");
-  elem.appendChild(img);
+function displaySelectedImg(imgItem: ImageObj) {
+  if (imgItem.src != null) {
+    const img = new Image();
+    img.src = imgItem.src;
+    clearImgDisplay();
+    THUMB_CONTAINER_ELEM.appendChild(img);
+  } else {
+    console.log("Unable to display selected img, src is nullish");
+  }
 }
 
 /**
  * Remove the pop-up main image display.
  */
 function clearImgDisplay() {
-  const elem = document.getElementById("thumb-container");
-  while (elem.firstChild) {
-    elem.removeChild(elem.firstChild);
+  while (THUMB_CONTAINER_ELEM.firstChild) {
+    THUMB_CONTAINER_ELEM.removeChild(THUMB_CONTAINER_ELEM.firstChild);
   }
 }
 
@@ -66,7 +97,7 @@ function clearImgDisplay() {
  * @param {number} width Image width.
  * @param {number} height Image height.
  */
-function displayRes(width, height) {
+function displayRes(width: number, height: number) {
   RESOLUTION_ELEM.textContent = `${width}px \u00D7 ${height}px`;
 }
 
@@ -74,9 +105,9 @@ function displayUnknownRes() {
   RESOLUTION_ELEM.textContent = "???px \u00D7 ???px";
 }
 
-function updateImageDisplay(imgItem) {
+function updateImageDisplay(imgItem: ImageObj) {
   displaySelectedImg(imgItem);
-  if (imgItem.lazyLoad || imgItem.width === null || imgItem.height === null) {
+  if (imgItem.lazyLoad) {
     displayUnknownRes();
   } else {
     displayRes(imgItem.width, imgItem.height);
@@ -90,14 +121,14 @@ function clearRes() {
 /**
  * Handle any promise errors.
  */
-function handleError(e) {
+function handleError(e: any) {
   console.error("Encountered a promise error:", e);
 }
 
 /**
  * Given the handler response, set any warnings which need to be set.
  */
-function dispatchWarnings(resp, promiseMetaProp) {
+function dispatchWarnings(resp: Feedback, promiseMetaProp: MetaProperty) {
   clearWarnings();
   let ok = true;
   if (resp.listenerType == "universal") {
@@ -123,18 +154,21 @@ function dispatchWarnings(resp, promiseMetaProp) {
     );
     ok = false;
   }
-  getPotentialRepost(getActiveImage(promiseMetaProp).fetchSrc)
-    .then((maybeRepost) => {
-      if (maybeRepost !== null) {
-        addRepostWarning("Repost Detected", `${maybeRepost.id}`);
-      } else if (ok) {
-        clearWarnings();
-      }
-      return Promise.resolve();
-    })
-    .catch((error) => {
-      console.error("Encountered an error looking up repost:", error);
-    });
+  const activeImage = getActiveImage(promiseMetaProp);
+  if (activeImage != null && activeImage.fetchSrc != null) {
+    getPotentialRepost(activeImage.fetchSrc)
+      .then((maybeRepost) => {
+        if (maybeRepost !== null) {
+          addRepostWarning("Repost Detected", `${maybeRepost.id}`);
+        } else if (ok) {
+          clearWarnings();
+        }
+        return Promise.resolve();
+      })
+      .catch((error) => {
+        console.error("Encountered an error looking up repost:", error);
+      });
+  }
 }
 
 /**
@@ -142,7 +176,7 @@ function dispatchWarnings(resp, promiseMetaProp) {
  * @param header Warning header. String.
  * @param node HTML Node, contents to fill the body.
  */
-function addWarning(header, node) {
+function addWarning(header: string, node: Node) {
   const warnHeaderElem = document.createElement("p");
   warnHeaderElem.setAttribute("class", "warning-container-header");
   const warnHeaderText = document.createTextNode(header);
@@ -151,18 +185,20 @@ function addWarning(header, node) {
   const group = document.createElement("div");
   group.appendChild(warnHeaderElem);
   group.appendChild(node);
-  const warnElemContainer = document.getElementById("warning-container");
+  const warnElemContainer = document.getElementById(
+    "warning-container"
+  ) as HTMLElement;
   warnElemContainer.appendChild(group);
 }
 
-function addTextWarning(header, body) {
+function addTextWarning(header: string, body: string) {
   const warnBodyElem = document.createElement("p");
   warnBodyElem.setAttribute("class", "warning-container-body");
   warnBodyElem.appendChild(document.createTextNode(body));
   addWarning(header, warnBodyElem);
 }
 
-function addRepostWarning(header, imageId) {
+function addRepostWarning(header: string, imageId: string) {
   const warnBodyElem = document.createElement("a");
   warnBodyElem.setAttribute("href", IMAGES_URL + imageId.toString());
   warnBodyElem.setAttribute("target", "_blank");
@@ -178,7 +214,9 @@ function addRepostWarning(header, imageId) {
  * Remove all warnings in the warning container.
  */
 function clearWarnings() {
-  const warnElemHeader = document.getElementById("warning-container");
+  const warnElemHeader = document.getElementById(
+    "warning-container"
+  ) as HTMLElement;
   const children = warnElemHeader.childNodes;
   children.forEach((x) => warnElemHeader.removeChild(x));
 }
@@ -187,20 +225,18 @@ function clearWarnings() {
  *  Set properties based on the pop-up's form entry.
  *  @param promiseMetaProp Object reference to edit the properties of.
  */
-function processPopUpForm(promiseMetaProp) {
-  if (document.getElementById("furbooru-fetch-input").checked) {
+function processPopUpForm(promiseMetaProp: MetaProperty) {
+  if (FURBOORU_FETCH_ELEM.checked) {
     promiseMetaProp.fetchType = GENERAL_FETCH_TYPE;
   } else {
     promiseMetaProp.fetchType = DIRECT_FETCH_TYPE;
   }
-  const setTags = getTagsFromPreset(
-    document.getElementById("tag-presets").value
-  );
+  const setTags = getTagsFromPreset(TAG_PRESETS_ELEM.value);
   if (setTags == null) {
     console.error("Tag Preset failed to load: ", setTags);
     return;
   }
-  const ratingTag = document.getElementById("ratings").value;
+  const ratingTag = RATINGS_ELEM.value;
   promiseMetaProp.tagPreset = [...setTags, ratingTag];
 }
 
@@ -211,14 +247,14 @@ function processPopUpForm(promiseMetaProp) {
  * @param promiseMetaProp Property which holds meta-data, usually form info.
  * @post Sends out a message to the background extension code.
  */
-function submit(postDataProp, promiseMetaProp) {
+function submit(postDataProp: PostDataProperty, promiseMetaProp: MetaProperty) {
   const submissionData = {
     ...postDataProp,
   };
   const lowerTags = postDataProp.tags
     .concat(promiseMetaProp.tagPreset)
     .map((x) => x.toLowerCase());
-  const uniqueTags = [...new Set(lowerTags)];
+  const uniqueTags = Array.from(new Set(lowerTags));
   submissionData.tags = uniqueTags;
   const request = {
     command: "createSubmissionTab",
@@ -234,15 +270,23 @@ function submit(postDataProp, promiseMetaProp) {
  * Update everything about the postDataProp based on the promiseMetaProp,
  * in the event that promiseMetaProp changes.
  */
-function updatePostDataPropFromMeta(postDataProp, promiseMetaProp) {
+function updatePostDataPropFromMeta(
+  postDataProp: PostDataProperty,
+  promiseMetaProp: MetaProperty
+) {
   resetNextPrev(promiseMetaProp.currentImgIdx, promiseMetaProp.imgItems.length);
   const selectedImg = getActiveImage(promiseMetaProp);
+  if (selectedImg == null) {
+    displayUnknownRes();
+    clearImgDisplay();
+    return;
+  }
   if (promiseMetaProp.fetchType === DIRECT_FETCH_TYPE) {
     displayRes(selectedImg.width, selectedImg.height);
   } else {
     displayUnknownRes();
   }
-  postDataProp.fetchURLStr = selectedImg.fetchSrc;
+  postDataProp.fetchURLStr = selectedImg.fetchSrc ?? "";
   updateImageDisplay(selectedImg);
 }
 
@@ -250,7 +294,10 @@ function updatePostDataPropFromMeta(postDataProp, promiseMetaProp) {
  * Set up form buttons to bind to message sending functions and property
  * updates.
  */
-function generalButtonSetup(promiseMetaProp, postDataProp) {
+function generalButtonSetup(
+  promiseMetaProp: MetaProperty,
+  postDataProp: PostDataProperty
+) {
   POST_FIRST_ELEMENT.addEventListener("click", () => {
     submit(postDataProp, promiseMetaProp);
   });
@@ -280,16 +327,14 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
     }
   });
 
-  document
-    .getElementById("furbooru-fetch-input")
-    .addEventListener("change", () => {
-      processPopUpForm(promiseMetaProp);
-      resetPopUp(promiseMetaProp, postDataProp);
-    });
-  document.getElementById("tag-presets").addEventListener("change", () => {
+  FURBOORU_FETCH_ELEM.addEventListener("change", () => {
+    processPopUpForm(promiseMetaProp);
+    resetPopUp(promiseMetaProp, postDataProp);
+  });
+  TAG_PRESETS_ELEM.addEventListener("change", () => {
     processPopUpForm(promiseMetaProp);
   });
-  document.getElementById("ratings").addEventListener("change", () => {
+  RATINGS_ELEM.addEventListener("change", () => {
     processPopUpForm(promiseMetaProp);
   });
 }
@@ -297,7 +342,7 @@ function generalButtonSetup(promiseMetaProp, postDataProp) {
 /**
  * Handle cleanup from a failed extraction.
  */
-function failureCleanup(promiseMetaProp, _) {
+function failureCleanup(promiseMetaProp: MetaProperty, _: any) {
   promiseMetaProp.imgItems = [];
   promiseMetaProp.currentImgIdx = 0;
   clearImgDisplay();
@@ -308,12 +353,19 @@ function failureCleanup(promiseMetaProp, _) {
 /*
  * Reload the popup display content.
  */
-function resetPopUp(promiseMetaProp, postDataProp) {
+function resetPopUp(
+  promiseMetaProp: MetaProperty,
+  postDataProp: PostDataProperty
+) {
   // Display current page content. ---------------------------------------------
   const tabsCurrent = browser.tabs.query({ active: true, currentWindow: true });
   tabsCurrent
     .then((tabs) => {
       const curTab = tabs[0];
+      if (curTab.url == null || curTab.id == null) {
+        console.debug("curTab.url or curTab.id are nullish");
+        return;
+      }
       // Display the URL
       displayURL(curTab.url);
 
@@ -386,20 +438,21 @@ function resetPopUp(promiseMetaProp, postDataProp) {
  * @param {.imgItems} promiseMetaProp
  * @returns The current image object.
  */
-function getActiveImage(promiseMetaProp) {
+function getActiveImage(promiseMetaProp: MetaProperty): ImageObj | undefined {
   return promiseMetaProp.imgItems[promiseMetaProp.currentImgIdx];
 }
 
 function main() {
   // Create references to passed around properties. While they aren't global,
   // We do use them in callback captures.
-  const postDataProp = {
+  const postDataProp: PostDataProperty = {
     fetchURLStr: "",
     sourceURLStr: "",
     description: "",
     tags: [],
+    autoquote: false,
   };
-  const promiseMetaProp = {
+  const promiseMetaProp: MetaProperty = {
     currentImgIdx: 0,
     imgItems: [],
     fetchType: DIRECT_FETCH_TYPE,

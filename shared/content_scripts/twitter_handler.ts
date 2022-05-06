@@ -1,8 +1,3 @@
-"use strict";
-
-// Needed for typescript to recognise this as imported.
-declare var browser: any;
-
 (() => {
   const SRC_STRING = "https://pbs.twimg.com/media/";
   const INFO_IDX = 2;
@@ -129,7 +124,7 @@ declare var browser: any;
     return "";
   }
 
-  function listener(request: Request) {
+  function listener(request: ExtractorRequest): Promise<Feedback> {
     const { command, data } = request;
     if (command === "contentExtractData") {
       switch (data.fetchType) {

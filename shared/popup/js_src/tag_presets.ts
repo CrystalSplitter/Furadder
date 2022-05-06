@@ -1,4 +1,4 @@
-const BUILT_IN_TAG_PRESETS = {
+const BUILT_IN_TAG_PRESETS: { [key: string]: string[] } = {
   none: [],
   "friendship-is-magic": [
     "feral",
@@ -14,7 +14,7 @@ const BUILT_IN_TAG_PRESETS = {
 /**
  * @returns An array of strings representing appendable booru tags.
  */
-export function getTagsFromPreset(tagPresetName) {
+export function getTagsFromPreset(tagPresetName: string) {
   // TODO: Have profile-based tag presets.
   const preset = BUILT_IN_TAG_PRESETS[tagPresetName];
   if (preset) {

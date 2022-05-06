@@ -2,7 +2,7 @@
   "name": "furadder",
   "version": "0.5.0",
   "description": "Allows easy image extraction and uploading to furbooru.org",
-  "main": "null",
+  "main": "shared/popup/popup_main.ts",
   "scripts": {
     "build-ext": "./prepare.bash && ./build.bash",
     "prepare-ext": "./prepare.bash",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/CrystalSplitter/Furadder#readme",
   "devDependencies": {
+    "@types/firefox-webext-browser": "^94.0.1",
     "prettier": "^2.6.2",
     "typescript": "^4.6.4"
   }
