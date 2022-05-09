@@ -95,18 +95,24 @@
   ): Promise<{ success: boolean } | { isError: boolean; message: string }> {
     if (request.command === "contentFurbooruFetch") {
       const setFetchSuccess = setFetchURL(request.data.fetchURLStr);
+      consoleDebug("Set fetch field success?", setFetchSuccess);
       const setSourceSuccess = setSourceURL(request.data.sourceURLStr);
+      consoleDebug("Set source field success?", setSourceSuccess);
       const setDescSuccess = setDescription(
         request.data.description,
         request.data.autoquote
       );
+      consoleDebug("Set description field?", setDescSuccess);
       if (setFetchSuccess && setSourceSuccess && setDescSuccess) {
         const fetchSuccess = callFetch();
+        consoleDebug("Called fetch?", fetchSuccess);
         const finalSuccess =
           fetchSuccess &&
           appendTags(request.data.tags ? request.data.tags : []);
+        consoleDebug("Submission completed successfully?", finalSuccess);
         return Promise.resolve({ success: finalSuccess });
       }
+      consoleError("Setting fields failed");
       return Promise.resolve({ success: false });
     }
     return Promise.reject({ isError: true, message: "Unsupported command" });

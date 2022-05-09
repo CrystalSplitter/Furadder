@@ -1,18 +1,13 @@
-"use strict";
-
 (() => {
-  const SRC_STRING = "https://pbs.twimg.com/media/";
-  const VIEW_PATH = "https://derpicdn.net/img/view";
+  // const VIEW_PATH = "https://derpicdn.net/img/view";
   const TAG_LIST = document.querySelector(".tag-list");
 
-  function derpibooruHandler() {
+  function derpibooruHandler(): ImageObj[] {
     const imgSrc = getViewURL();
     return [
       newImageObject({
         src: imgSrc,
         lazyLoad: true,
-        width: null,
-        height: null,
       }),
     ];
   }
@@ -20,8 +15,8 @@
   /**
    * @returns The URL of the image View (full res).
    */
-  function getViewURL() {
-    const hrefElem = document.querySelector("a[title~=View]");
+  function getViewURL(): string | null {
+    const hrefElem = document.querySelector<HTMLLinkElement>("a[title~=View]");
     if (hrefElem == null) {
       consoleError("Unable to find view link");
       return null;
@@ -33,7 +28,7 @@
    * Return the source link provided.
    * @returns {string} Source URL.
    */
-  function getSourceLink() {
+  function getSourceLink(): string {
     const src = document.querySelector(
       "#image-source > p > a.js-source-link"
     )?.textContent;
@@ -46,10 +41,10 @@
   /**
    * Slice the front of an author tag off, so it just returns the author name.
    */
-  function artistTagToName(authorTag) {
+  function artistTagToName(authorTag: string): string | null {
     const reg = /artist:(.+)/;
     const match = authorTag.match(reg);
-    if (match && match[1]) {
+    if (match != null && match[1]) {
       return match[1];
     }
     return null;
@@ -58,101 +53,87 @@
   /**
    * Return the list of artist names.
    */
-  function getArtists() {
+  function getArtists(): string[] {
     if (TAG_LIST == null) {
       return [];
     }
-    let arr = [];
-    for (let i = 0; i < TAG_LIST.childNodes.length; i++) {
-      const artist = artistTagToName(
-        TAG_LIST.childNodes[i].getAttribute("data-tag-name")
-      );
-      if (artist) {
-        arr.push(artist);
-      }
-    }
-    return arr;
+    return Array.from(TAG_LIST.children)
+      .map((e) => e.getAttribute("data-tag-name"))
+      .filter((tag): tag is string => tag != null)
+      .map((tag) => artistTagToName(tag))
+      .filter((x): x is string => x != null);
   }
 
   /**
    * Extract tags from Derpibooru and return them as an Array of Strings.
    */
-  function getDerpiTags() {
+  function getDerpiTags(): string[] {
     if (TAG_LIST == null) {
       return [];
     }
-    let arr = [];
-    TAG_LIST.childNodes.forEach((child) => {
-      const tag = child.getAttribute("data-tag-name");
-      if (tag == null) {
-        consoleError("Couldn't get 'data-tag-name' for", tag);
-        return;
-      }
-      if (!tag.startsWith("artist:")) {
-        arr.push(tag);
-      }
-    });
-    return arr;
+    return Array.from(TAG_LIST.children)
+      .map((e) => e.getAttribute("data-tag-name"))
+      .filter(
+        (tag): tag is string => tag != null && !tag.startsWith("artist:")
+      );
   }
 
   /**
    * Return the extracted description.
    */
-  function getDescription() {
+  function getDescription(): string {
     const descElem = document.querySelector(".image-description__text");
-    return descrRecursiveHelper(descElem);
+    return descrRecHelper(descElem);
   }
 
   /**
    * @param {Element} elem Recurse element target.
    * @returns {string} Combined string description for the elem.
    */
-  function descrRecursiveHelper(elem) {
+  function descrRecHelper(elem: Node | null): string {
     if (elem?.hasChildNodes()) {
       return Array.from(elem?.childNodes).reduce((acc, child) => {
         switch (child.nodeName) {
           case "#text": // (Raw) text
             return acc + (child.nodeValue ?? "");
           case "A": // Hyperlinks
-            return (
-              acc + "[" + descrRecursiveHelper(child) + "](" + child.href + ")"
-            );
+            const linkChild = child as HTMLLinkElement;
+            return acc + `[${descrRecHelper(linkChild)}](${linkChild.href})`;
           case "BR": // Newlines
             return acc + "";
           case "BLOCKQUOTE": // Block quotes
-            return (
-              acc + "> " + descrRecursiveHelper(child).replaceAll("\n", "\n> ")
-            );
+            return acc + "> " + descrRecHelper(child).replaceAll("\n", "\n> ");
           case "CODE": // Code
-            return acc + "`" + descrRecursiveHelper(child) + "`";
+            return acc + "`" + descrRecHelper(child) + "`";
           case "DEL": // Strikethrough
-            return acc + "~~" + descrRecursiveHelper(child) + "~~";
+            return acc + "~~" + descrRecHelper(child) + "~~";
           case "DIV": // Paragraph
-            return acc + "\n" + descrRecursiveHelper(child);
+            return acc + "\n" + descrRecHelper(child);
           case "EM": // Italics
-            return acc + "*" + descrRecursiveHelper(child) + "*";
+            return acc + "*" + descrRecHelper(child) + "*";
           case "IMG": // Embedded image
-            return acc + (child.src ?? "");
+            return acc + ((child as HTMLImageElement).src ?? "");
           case "INS": // Underline
-            return acc + "__" + descrRecursiveHelper(child) + "__";
+            return acc + "__" + descrRecHelper(child) + "__";
           case "LI": // List element
-            return acc + "* " + descrRecursiveHelper(child);
+            return acc + "* " + descrRecHelper(child);
           case "STRONG": // Bold
-            return acc + "**" + descrRecursiveHelper(child) + "**";
+            return acc + "**" + descrRecHelper(child) + "**";
           case "UL": // Unordered list
-            return acc + descrRecursiveHelper(child);
+            return acc + descrRecHelper(child);
           case "SPAN": {
-            if (child.className === "spoiler") {
+            const spanChild = child as HTMLSpanElement;
+            if (spanChild.className === "spoiler") {
               // Text spoiler
-              return acc + "||" + descrRecursiveHelper(child) + "||";
-            } else if (child.className === "imgspoiler") {
+              return acc + "||" + descrRecHelper(child) + "||";
+            } else if (spanChild.className === "imgspoiler") {
               // Image spoiler
-              return acc + "![](" + descrRecursiveHelper(child) + ")";
+              return acc + "![](" + descrRecHelper(child) + ")";
             }
             return acc + "";
           }
           default:
-            return acc + descrRecursiveHelper(child);
+            return acc + descrRecHelper(child);
         }
       }, "");
     }
@@ -164,11 +145,11 @@
    * @param {string[]} tags Array of raw extracted tags.
    * @returns {string[]} Transformed derpi tags for Furbooru.
    */
-  function transformDerpiTags(tags) {
+  function transformDerpiTags(tags: string[]): string[] {
     return [...tags, "my little pony"];
   }
 
-  function listener(request) {
+  function listener(request: ExtractorRequest): Promise<Feedback> {
     const { command, data } = request;
     if (command === "contentExtractData") {
       switch (data.fetchType) {

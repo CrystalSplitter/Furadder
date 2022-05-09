@@ -13,8 +13,12 @@ export async function queryBooru(queryContent: string): Promise<Response> {
  * @param {string} artist Artist name
  * @returns {Promise<any[]>} Promise of every image by the artist.
  */
-export async function getImagesByArtist(artist: string): Promise<any[]> {
-  return queryBooru(`artist:${artist}`)
+export async function getImagesByArtists(artists: string[]): Promise<any[]> {
+  if (artists.length == 0) {
+    return [];
+  }
+  let queryStr = artists.map((a) => `artist:${a}`).join("||");
+  return queryBooru(queryStr)
     .then((resp) => resp.json())
     .then((json) => {
       if (json.images.length > 0) {

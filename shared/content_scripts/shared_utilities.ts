@@ -1,14 +1,9 @@
-interface Request {
-  command: string;
-  data: any;
-}
-
 /**
  * The message to send back to the extension from a content script.
  */
 class Feedback {
   listenerType: string;
-  images: any[];
+  images: ImageObj[];
   description: string;
   sourceLink: string;
   expectedIdx: number;
@@ -17,25 +12,19 @@ class Feedback {
   autoquote: boolean;
   authors: string[];
 
-  constructor(args: any) {
-    this.listenerType = args.listenerType;
-    this.images = args.images === undefined ? [] : args.images;
-    this.description = args.description === undefined ? null : args.description;
-    this.sourceLink = args.sourceLink === undefined ? null : args.sourceLink;
-    this.expectedIdx = args.expectedIdx === undefined ? 0 : args.expectedIdx;
-    this.extractedTags =
-      args.extractedTags === undefined ? [] : args.extractedTags;
-    this.expectedResolutions =
-      args.expectedResolutions == undefined ? [] : args.expectedResolutions;
-    this.autoquote = args.autoquote === undefined ? true : args.autoquote;
-
-    if (args.authors != undefined) {
-      this.authors = args.authors;
-    } else if (args.author != undefined) {
-      this.authors = [args.author];
-    } else {
-      this.authors = [];
+  constructor(args: Partial<Feedback>) {
+    if (args.listenerType == null) {
+      throw `listenerType cannot be ${args.listenerType}`;
     }
+    this.listenerType = args.listenerType;
+    this.images = args.images ?? [];
+    this.description = args.description ?? "";
+    this.sourceLink = args.sourceLink ?? "";
+    this.expectedIdx = args.expectedIdx ?? 0;
+    this.extractedTags = args.extractedTags ?? [];
+    this.expectedResolutions = args.expectedResolutions ?? [];
+    this.autoquote = args.autoquote ?? true;
+    this.authors = args.authors ?? [];
   }
 
   toObject() {
@@ -69,12 +58,6 @@ const MONTH_TO_NUM: { [key: string]: number } = {
   nov: 11,
   dec: 12,
 };
-
-interface Year {
-  year: number;
-  month: number;
-  day: number;
-}
 
 function enUSLangYearFunc(s: string): Year | null {
   const re = /([A-Z][a-z]+)\s+([0-9]?[0-9]),\s+([0-9]+)/;
