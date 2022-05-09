@@ -11,8 +11,14 @@
   --thumb-max-height: 100px;
 }
 
+@font-face {
+  font-family: "Open Sans";
+  src: url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"),
+       url("/fonts/OpenSans-Regular-webfont.woff") format("woff");
+}
+
 body {
-  font-family: "Trebuchet MS", "sans-serif";
+  font-family: "Open Sans", ui-sans-serif, sans-serif;
   color: var(--main-text-color);
   background-color: var(--main-bg-color);
   padding: 0;
