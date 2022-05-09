@@ -7,6 +7,14 @@
   "background": {
     "service_worker": "service_worker.js"
   },
+  "commands": {
+    "open-popup": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F"
+      },
+      "description": "Open FurAdder Pop-Up"
+    }
+  },
   "content_scripts": [
     {
       "js": [

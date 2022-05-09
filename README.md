@@ -19,6 +19,7 @@ A [furbooru.org](https://furbooru.org) image extractor and uploader.
 - Forces a rating tag so you won't forget.
 - Detects hash-identical reposts before upload.
 - Universal extraction (pull images from any site!).
+- Configurable Keyboard Shortcuts/Hot Keys.
 
 ## Intelligently Supported Sites
 

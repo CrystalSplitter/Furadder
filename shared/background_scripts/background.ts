@@ -112,3 +112,27 @@ function listener(request: BackgroundRequest): Promise<{ success: boolean }> {
 }
 
 browser.runtime.onMessage.addListener(listener);
+
+/**
+ * Handle Keyboard Shortcut Commands.
+ *
+ * The valid commands can be found in the manifest files.
+ * @param {string} command Command name to call.
+ */
+function commandListener(command: string) {
+  if (command === "open-popup") {
+    if (browser == null) {
+      console.error("[FUR]", "'browser' object is null. Did polyfill load?");
+      return;
+    }
+    if (browser.browserAction != null) {
+      browser.browserAction.openPopup();
+    } else if (browser.action != null) {
+      browser.action.openPopup();
+    } else {
+      console.error("[FUR]", "'browser' is non-null, but has no actions.");
+    }
+  }
+}
+
+browser.commands.onCommand.addListener(commandListener);
