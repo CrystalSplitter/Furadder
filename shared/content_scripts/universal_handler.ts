@@ -1,7 +1,7 @@
 //declare var browser: any;
 
 (() => {
-  function listener(request: Request): Promise<Feedback | string> {
+  function listener(request: ExtractorRequest): Promise<Feedback> {
     const { command, data } = request;
     if (command === "contentExtractData") {
       switch (data.fetchType) {

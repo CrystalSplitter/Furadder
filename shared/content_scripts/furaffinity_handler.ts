@@ -1,39 +1,51 @@
-"use strict";
-
 (() => {
   /**
    * Return the expected resolution as an object, or null if it could
    * not be found.
    */
-  function getExpectedRes() {
-    const matches = document
-      .querySelector("main")
-      .innerText.match("([0-9]+)x([0-9]+)px");
-    if (matches != null && matches.length === 3) {
-      return {
-        width: parseInt(matches[1]),
-        height: parseInt(matches[2]),
-      };
+  function getExpectedRes(): Resolution[] {
+    const infoElems = document.querySelectorAll<HTMLSpanElement>(
+      ".info.text > div > span"
+    );
+    for (let i = 0; i < infoElems.length; i++) {
+      const matches = infoElems[i].innerText.match(
+        /^\s*([0-9]+)\s*x\s*([0-9]+)(px)?\s*$/
+      );
+      if (matches != null && matches.length >= 3) {
+        return [
+          {
+            width: parseInt(matches[1]),
+            height: parseInt(matches[2]),
+          },
+        ];
+      }
     }
-    return null;
+    return [];
   }
 
-  function getArtists() {
-    const elem = document.querySelector(".submission-id-sub-container > a");
-    if (elem == null) {
+  function getArtists(): string[] {
+    const elem = document.querySelector<HTMLLinkElement>(
+      ".submission-id-sub-container > a"
+    );
+    if (elem == null || elem.textContent == null) {
+      consoleError("Unable to find artist");
       return [];
     }
     return [elem.textContent];
   }
 
-  function getDescription() {
+  function getDescription(): string {
     const elem = document.querySelector(
       ".section-body > .submission-description"
     );
-    return elem ? escapeMarkdown(elem.textContent.trim()) : "";
+    if (elem == null || elem.textContent == null) {
+      consoleError("Unable to get description");
+      return "";
+    }
+    return elem.textContent.trim();
   }
 
-  function listener(request) {
+  function listener(request: ExtractorRequest): Promise<Feedback> {
     const { command, data } = request;
     if (command === "contentExtractData") {
       switch (data.fetchType) {
@@ -44,7 +56,7 @@
             listenerType: "furaffinity",
             images: imgObjs,
             sourceLink: document.location.href,
-            // expectedResolutions: [getExpectedRes()],
+            expectedResolutions: getExpectedRes(),
             authors: getArtists(),
             description: getDescription(),
           }).resolvePromise();

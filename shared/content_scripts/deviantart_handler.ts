@@ -1,29 +1,17 @@
-"use strict";
-
 (() => {
-  function imageExtractor(general) {
-    const arr = Array.from(document.images);
-    arr.sort(sizeCompare).reverse();
-    const imgObjs = arr.map((x) =>
-      newImageObject({
-        src: x.src,
-        width: x.naturalWidth,
-        height: x.naturalHeight,
-        fetchSrc: general ? document.location.href : x.src,
-      })
-    );
-    return imgObjs;
+  function imageExtractor(general: boolean): ImageObj[] {
+    return genericImageExtractor(general);
   }
 
   /**
    * Return the expected resolution as an object, or null if it could
    * not be found.
    */
-  function getExpectedRes() {
+  function getExpectedRes(): Resolution | null {
     const matches = document
       .querySelector("main")
-      .innerText.match("([0-9]+)x([0-9]+)px");
-    if (matches.length === 3) {
+      ?.innerText?.match("([0-9]+)x([0-9]+)px");
+    if (matches != null && matches.length === 3) {
       return {
         width: parseInt(matches[1]),
         height: parseInt(matches[2]),
@@ -32,21 +20,22 @@
     return null;
   }
 
-  function getArtists() {
+  function getArtists(): string[] {
     const elem = document.querySelector(
       "div > div > span > a.user-link[data-username]"
     );
-    if (elem == null) {
+    const usernameAttr = elem?.attributes.getNamedItem("data-username");
+    if (usernameAttr == null) {
       consoleError("Unable to find artist");
       return [];
     }
-    return [elem.attributes["data-username"].value];
+    return [usernameAttr.value];
   }
 
   function getDescription() {
     const legacyJournal = document.querySelectorAll("div.legacy-journal")[0];
     const descBody = legacyJournal
-      ? escapeMarkdown(descrRecursiveHelper(legacyJournal, 0).trim())
+      ? escapeMarkdown(descrRecursiveHelper(legacyJournal).trim())
       : "";
     const title = extractTitle();
     const license = extractLicenseInfo();
@@ -60,7 +49,7 @@
    * @param {Node} elem Recurse element target.
    * @returns {string} Collected description.
    */
-  function descrRecursiveHelper(elem) {
+  function descrRecursiveHelper(elem: Node | undefined): string {
     if (elem?.hasChildNodes()) {
       return Array.from(elem?.childNodes).reduce((acc, child) => {
         switch (child.nodeName) {
@@ -81,7 +70,7 @@
   /**
    * @returns {string} The DeviantArt image title.
    */
-  function extractTitle() {
+  function extractTitle(): string {
     return (
       document.querySelector("[data-hook=deviation_title]")?.textContent ?? ""
     );
@@ -90,24 +79,25 @@
   /**
    * @returns {string} The license info from the page.
    */
-  function extractLicenseInfo() {
+  function extractLicenseInfo(): string {
     // This class name may change through obfuscation.
     const license = document.querySelector("a[rel*='license']");
     return license?.textContent ?? "";
   }
 
-  function listener(request) {
+  function listener(request: ExtractorRequest): Promise<Feedback> {
     const { command, data } = request;
     if (command === "contentExtractData") {
       switch (data.fetchType) {
         case "direct":
           consoleDebug("Using direct fetch");
-          const imgObjs = genericImageExtractor(false);
+          const imgObjs = imageExtractor(false);
+          const expRes = getExpectedRes();
           return new Feedback({
             listenerType: "deviantart",
             images: imgObjs,
             sourceLink: document.location.href,
-            expectedResolutions: [getExpectedRes()],
+            expectedResolutions: expRes == null ? [] : [expRes],
             authors: getArtists(),
             description: getDescription(),
           }).resolvePromise();

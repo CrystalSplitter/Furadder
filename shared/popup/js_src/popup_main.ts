@@ -1,6 +1,10 @@
 import { authorAlias } from "./aliasing.js";
 import { getTagsFromPreset } from "./tag_presets.js";
-import { getPotentialRepost, IMAGES_URL } from "./repost_check.js";
+import {
+  getPotentialRepost,
+  getImagesByArtists,
+  IMAGES_URL,
+} from "./repost_check.js";
 
 const SUBMISSION_URL = "https://furbooru.org/images/new";
 const POST_FIRST_ELEMENT = document.getElementById("post-first") as HTMLElement;
@@ -17,28 +21,27 @@ const THUMB_CONTAINER_ELEM = document.getElementById(
 const TAG_PRESETS_ELEM = document.getElementById(
   "tag-presets"
 ) as HTMLSelectElement;
-const RATINGS_ELEM = document.getElementById(
-  "tag-presets"
-) as HTMLSelectElement;
+const RATINGS_ELEM = document.getElementById("ratings") as HTMLSelectElement;
 const FURBOORU_FETCH_ELEM = document.getElementById(
   "furbooru-fetch-input"
 ) as HTMLInputElement;
+const ARTIST_IMAGES_INFO_ELEM = document.getElementById(
+  "artist-images-info"
+) as HTMLElement;
 
 const DIRECT_FETCH_TYPE = "direct";
 const GENERAL_FETCH_TYPE = "general";
 
 /**
- * Holds current state of the PopUp Page.
+ * Pull data from the tab.
+ * @param tabId Tab Id to send the request to.
+ * @param data Data to send to the tab's extractor.
+ * @returns Feedback info from the requested tab.
  */
-interface MetaProperty {
-  currentImgIdx: number;
-  fetchType: "direct" | "general";
-  imgItems: ImageObj[];
-  manualIdx: boolean;
-  tagPreset: string[];
-}
-
-async function extractData(tabId: number, data: any): Promise<Feedback> {
+async function extractData(
+  tabId: number,
+  data: ExtractorRequestData
+): Promise<Feedback> {
   return browser.tabs.sendMessage(tabId, {
     command: "contentExtractData",
     data: data,
@@ -146,12 +149,7 @@ function dispatchWarnings(resp: Feedback, promiseMetaProp: MetaProperty) {
       resp.images[promiseMetaProp.currentImgIdx].height === resObj.height;
   });
   if (resp.listenerType == "deviantart" && !hasRes) {
-    addTextWarning(
-      "DeviantArt",
-      "Not extracting the expected resolution. " +
-        "DeviantArt may hide hi-res files behind " +
-        "a download button. "
-    );
+    addTextWarning("Not Expected Resolution", "Check for a download button?");
     ok = false;
   }
   const activeImage = getActiveImage(promiseMetaProp);
@@ -290,6 +288,17 @@ function updatePostDataPropFromMeta(
   updateImageDisplay(selectedImg);
 }
 
+function updateArtistCount(artists: string[]) {
+  getImagesByArtists(artists)
+    .catch((e) => {
+      consoleError("Could not get images by artists", e);
+      throw e;
+    })
+    .then((images) => {
+      ARTIST_IMAGES_INFO_ELEM.textContent = `Uploaded images from artists: ${images.length}`;
+    });
+}
+
 /**
  * Set up form buttons to bind to message sending functions and property
  * updates.
@@ -391,19 +400,17 @@ function resetPopUp(
           promiseMetaProp.currentImgIdx = expectedIdx;
 
           // Handle post authors/artists ------------------------------
-          if (resp.authors.length > 0) {
+          const aliasedAuthors = (() => {
             if (resp.listenerType) {
-              resp.authors.forEach((author) => {
-                postDataProp.tags.push(
-                  "artist:" + authorAlias(resp.listenerType, author)
-                );
-              });
+              return resp.authors.map((a) => authorAlias(resp.listenerType, a));
             } else {
-              resp.authors.forEach((author) => {
-                postDataProp.tags.push("artist:" + author);
-              });
+              return resp.authors;
             }
-          }
+          })();
+          aliasedAuthors.forEach((author) => {
+            postDataProp.tags.push("artist:" + author);
+          });
+
           // Handle post extracted data -------------------------------
           if (resp.extractedTags) {
             postDataProp.tags = postDataProp.tags.concat(resp.extractedTags);
@@ -416,7 +423,8 @@ function resetPopUp(
             // We extracted some images! Update the display and what to
             // post.
             updatePostDataPropFromMeta(postDataProp, promiseMetaProp);
-            dispatchWarnings(resp, promiseMetaProp);
+            updateArtistCount(aliasedAuthors); // ASYNC
+            dispatchWarnings(resp, promiseMetaProp); // ASYNC
             return Promise.resolve({ isError: false });
           }
 

@@ -1,34 +1,35 @@
 interface ExtractorRequest {
-  command: string;
-  data: any;
+  readonly command: string;
+  readonly data: ExtractorRequestData;
+}
+
+interface ExtractorRequestData {
+  readonly fetchType: "direct" | "general";
+  readonly urlStr: string;
 }
 
 interface BackgroundRequest {
-  command: string;
-  data: any;
+  readonly command: string;
+  readonly data: any;
 }
 
 interface SubmissionRequest {
-  command: string;
-  data: PostDataProperty;
-}
-
-interface ExtractorResponse {
-  expectedIdx: number;
+  readonly command: string;
+  readonly data: PostDataProperty;
 }
 
 interface ImageObj {
-  src: string | null;
-  fetchSrc?: string | null;
-  width: number;
-  height: number;
-  lazyLoad: boolean;
+  readonly src: string | null;
+  readonly fetchSrc?: string | null;
+  readonly width: number;
+  readonly height: number;
+  readonly lazyLoad: boolean;
 }
 
 interface Year {
-  year: number;
-  month: number;
-  day: number;
+  readonly year: number;
+  readonly month: number;
+  readonly day: number;
 }
 
 /**
@@ -43,9 +44,20 @@ interface PostDataProperty {
 }
 
 /**
+ * Holds current state of the PopUp Page.
+ */
+interface MetaProperty {
+  currentImgIdx: number;
+  fetchType: "direct" | "general";
+  imgItems: ImageObj[];
+  manualIdx: boolean;
+  tagPreset: string[];
+}
+
+/**
  * Image resolution.
  */
 interface Resolution {
-  width: number;
-  height: number;
+  readonly width: number;
+  readonly height: number;
 }
