@@ -1,5 +1,3 @@
-"use strict";
-
 declare var importScripts: (arg: string) => void;
 
 try {
