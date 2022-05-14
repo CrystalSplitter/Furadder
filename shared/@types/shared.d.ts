@@ -52,6 +52,9 @@ interface MetaProperty {
   imgItems: ImageObj[];
   manualIdx: boolean;
   tagPreset: string[];
+  readonly defaultRating: string;
+  readonly defaultPreset: PresetId;
+  readonly allPresets: Preset[];
 }
 
 /**
@@ -61,3 +64,8 @@ interface Resolution {
   readonly width: number;
   readonly height: number;
 }
+
+type PresetId = number & { __compileTime: any };
+type Preset = { name: string; presetId: PresetId; tags: string[] };
+type OptionsData = { [key: string]: any };
+type PresetEntry = { furadder_custom_presets: Preset[] };

@@ -1,5 +1,11 @@
 import { authorAlias } from "./aliasing.js";
-import { getTagsFromPreset } from "./tag_presets.js";
+import {
+  getTagsFromPreset,
+  stringToPresetId,
+  presetIdToString,
+  BUILT_IN_TAG_PRESETS,
+} from "../../universal_utils/tag_presets.js";
+import { load } from "../../universal_utils/storage.js";
 import {
   getPotentialRepost,
   getImagesByArtists,
@@ -38,7 +44,7 @@ const GENERAL_FETCH_TYPE = "general";
  * @param data Data to send to the tab's extractor.
  * @returns Feedback info from the requested tab.
  */
-async function extractData(
+function extractData(
   tabId: number,
   data: ExtractorRequestData
 ): Promise<Feedback> {
@@ -229,11 +235,10 @@ function processPopUpForm(promiseMetaProp: MetaProperty) {
   } else {
     promiseMetaProp.fetchType = DIRECT_FETCH_TYPE;
   }
-  const setTags = getTagsFromPreset(TAG_PRESETS_ELEM.value);
-  if (setTags == null) {
-    console.error("Tag Preset failed to load: ", setTags);
-    return;
-  }
+  const setTags = getTagsFromPreset(
+    stringToPresetId(TAG_PRESETS_ELEM.value),
+    promiseMetaProp.allPresets
+  );
   const ratingTag = RATINGS_ELEM.value;
   promiseMetaProp.tagPreset = [...setTags, ratingTag];
 }
@@ -299,6 +304,17 @@ function updateArtistCount(artists: string[]) {
     });
 }
 
+function updatePresetSelectOptions(defaultPreset: PresetId, presets: Preset[]) {
+  // Add the custom presets
+  presets.forEach((preset) => {
+    const newOption = document.createElement("option");
+    newOption.setAttribute("value", presetIdToString(preset.presetId));
+    newOption.text = preset.name;
+    TAG_PRESETS_ELEM.appendChild(newOption);
+  });
+  TAG_PRESETS_ELEM.value = presetIdToString(defaultPreset);
+}
+
 /**
  * Set up form buttons to bind to message sending functions and property
  * updates.
@@ -307,6 +323,11 @@ function generalButtonSetup(
   promiseMetaProp: MetaProperty,
   postDataProp: PostDataProperty
 ) {
+  updatePresetSelectOptions(
+    promiseMetaProp.defaultPreset,
+    promiseMetaProp.allPresets
+  );
+  RATINGS_ELEM.value = promiseMetaProp.defaultRating;
   POST_FIRST_ELEMENT.addEventListener("click", () => {
     submit(postDataProp, promiseMetaProp);
   });
@@ -367,7 +388,10 @@ function resetPopUp(
   postDataProp: PostDataProperty
 ) {
   // Display current page content. ---------------------------------------------
-  const tabsCurrent = browser.tabs.query({ active: true, currentWindow: true });
+  const tabsCurrent = browser.tabs.query({
+    active: true,
+    currentWindow: true,
+  });
   tabsCurrent
     .then((tabs) => {
       const curTab = tabs[0];
@@ -451,26 +475,35 @@ function getActiveImage(promiseMetaProp: MetaProperty): ImageObj | undefined {
 }
 
 function main() {
-  // Create references to passed around properties. While they aren't global,
-  // We do use them in callback captures.
-  const postDataProp: PostDataProperty = {
-    fetchURLStr: "",
-    sourceURLStr: "",
-    description: "",
-    tags: [],
-    autoquote: false,
-  };
-  const promiseMetaProp: MetaProperty = {
-    currentImgIdx: 0,
-    imgItems: [],
-    fetchType: DIRECT_FETCH_TYPE,
-    tagPreset: [],
-    manualIdx: false,
-  };
+  load<any>({
+    furadder_default_rating: "safe",
+    furadder_default_preset: 0, // Maps to None
+    furadder_custom_presets: [],
+  }).then((options) => {
+    // Create references to passed around properties. While they aren't global,
+    // We do use them in callback captures.
+    const postDataProp: PostDataProperty = {
+      fetchURLStr: "",
+      sourceURLStr: "",
+      description: "",
+      tags: [],
+      autoquote: false,
+    };
+    const promiseMetaProp: MetaProperty = {
+      currentImgIdx: 0,
+      imgItems: [],
+      fetchType: DIRECT_FETCH_TYPE,
+      tagPreset: [],
+      manualIdx: false,
+      defaultRating: options.furadder_default_rating,
+      defaultPreset: options.furadder_default_preset as PresetId,
+      allPresets: [...BUILT_IN_TAG_PRESETS, ...options.furadder_custom_presets],
+    };
 
-  // Set up buttons. -----------------------------------------------------------
-  generalButtonSetup(promiseMetaProp, postDataProp);
-  processPopUpForm(promiseMetaProp);
-  resetPopUp(promiseMetaProp, postDataProp);
+    // Set up buttons. -----------------------------------------------------------
+    generalButtonSetup(promiseMetaProp, postDataProp);
+    processPopUpForm(promiseMetaProp);
+    resetPopUp(promiseMetaProp, postDataProp);
+  });
 }
 document.addEventListener("DOMContentLoaded", main);

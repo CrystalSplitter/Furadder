@@ -9,6 +9,11 @@
     "default_icon": "icons/furadder_icon_32.png",
     "default_popup": "popup/furadder.html"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "crystalsplitter@furadder.net"
+    }
+  },
   "commands": {
     "open-popup": {
       "suggested_key": {
@@ -93,8 +98,13 @@
   },
   "manifest_version": 2,
   "name": "FurAdder",
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
   "permissions": [
     "<all_urls>",
+    "storage",
     "tabs"
   ],
   "version": "0.5.0",

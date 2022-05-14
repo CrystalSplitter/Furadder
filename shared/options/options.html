@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../popup/style.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script
+      type="module"
+      src="../popup/third_party/browser-polyfill.min.js"
+    ></script>
+    <title>FurAdder Options</title>
+  </head>
+  <body>
+    <h1>FurAdder Options</h1>
+    <div id="page-container">
+      <div class="section preset-container">
+        <h2>Edit Presets</h2>
+        <div class="section-item">
+          <label for="selected-preset">Selected Preset</label>
+          <br />
+          <select id="selected-preset" class="indented"></select>
+        </div>
+        <div class="section-item">
+          <label for="preset-name-input">Preset Name</label><br />
+          <input id="preset-name-input" type="text" class="indented" />
+        </div>
+        <div class="section-item">
+          <label for="preset-tags-input">Preset Tags (Comma Separated)</label>
+          <br />
+          <textarea id="preset-tags-input" class="indented"></textarea>
+        </div>
+        <div class="section-item">
+          <button id="save-changes" disabled="">Save Changes</button>
+          <button id="new-preset">Save As New Preset</button>
+          <button id="delete-preset" disabled="">Delete Preset</button>
+        </div>
+      </div>
+      <div class="section default-rating-container">
+        <h2>Default Rating</h2>
+        <select id="default-rating" class="section-item">
+          <option value="safe">safe</option>
+          <option value="suggestive">suggestive</option>
+          <option value="questionable">questionable</option>
+          <option value="explicit">explicit</option>
+        </select>
+      </div>
+      <div class="section default-preset-container">
+        <h2>Default Preset</h2>
+        <select id="default-preset" class="section-item"></select>
+      </div>
+      <div class="section">
+        <button id="save-options">Save Options</button>
+      </div>
+    </div>
+    <script type="module" src="../universal_utils/storage.js"></script>
+    <script type="module" src="../universal_utils/tag_presets.js"></script>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>
