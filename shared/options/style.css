@@ -4,7 +4,7 @@ body {
 }
 
 #page-container {
-  margin: 0 auto 0 20%;
+  margin: 0 auto 0 15%;
 }
 
 .section {
@@ -21,6 +21,10 @@ body {
 
 #delete-preset:enabled {
   background-color: #6e2641;
+}
+
+#new-preset {
+  margin-left: 30px;
 }
 
 #new-preset:enabled {

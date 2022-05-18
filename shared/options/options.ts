@@ -16,14 +16,22 @@ const DEFAULT_PRESET_ELEM =
   document.querySelector<HTMLSelectElement>("#default-preset")!;
 const DEFAULT_RATING_ELEM =
   document.querySelector<HTMLSelectElement>("#default-rating")!;
+const UNDO_PRESET_CHANGES_BUTTON =
+  document.querySelector<HTMLSelectElement>("#undo-changes")!;
+const SAVE_OPTIONS_ELEM =
+  document.querySelector<HTMLButtonElement>("#save-options")!;
 
 function saveNewPresetWrapper() {
-  const tags = PRESET_TAGS_INPUT_ELEM.value
-    .split(",")
-    .map((t) => t.trim().toLowerCase())
-    .filter((t) => t !== "" && t !== ",");
+  const tags = splitTagString(PRESET_TAGS_INPUT_ELEM.value);
   const name = PRESET_NAME_INPUT_ELEM.value;
   saveNewPreset(name, tags).then(() => console.log("Saved preset!"));
+}
+
+function splitTagString(tagStr: string): string[] {
+  return tagStr
+    .split(/[,\n]/)
+    .map((t) => t.replace("\n", " ").trim().toLowerCase())
+    .filter((t) => t !== "" && t !== ",");
 }
 
 async function saveNewPreset(name: string, tags: string[]): Promise<number> {
@@ -46,36 +54,28 @@ async function saveNewPreset(name: string, tags: string[]): Promise<number> {
   // Have to correct the selection so that the selected preset goes
   // to the new value.
   SELECTED_PRESET_ELEM.value = presetIdToString(newPreset.presetId);
-  toggleSaveChangePresetButton(false);
+  toggleChangePresetButtons(false);
   return Promise.resolve(customPresets.furadder_custom_presets.length - 1);
 }
 
 async function updatePresetWrapper() {
-  const tags = PRESET_TAGS_INPUT_ELEM.value
-    .split(",")
-    .map((t) => t.trim().toLowerCase())
-    .filter((t) => t !== "" && t !== ",");
+  const tags = splitTagString(PRESET_TAGS_INPUT_ELEM.value);
   const name = PRESET_NAME_INPUT_ELEM.value;
   await updatePreset(getDisplaySelectedPreset(), name, tags);
   console.log("Saved preset!");
-  toggleSaveChangePresetButton(false);
+  toggleChangePresetButtons(false);
 }
 
-function deletePresetWrapper() {
-  load<PresetEntry>({ furadder_custom_presets: [] })
-    .then((presetEntry) => {
-      const presetId = getDisplaySelectedPreset();
-      const newPresets = presetEntry.furadder_custom_presets.filter(
-        (p) => p.presetId != presetId
-      );
-      presetEntry.furadder_custom_presets = newPresets;
-      return presetEntry;
-    })
-    .then((presetEntry) => save(presetEntry))
-    .then(() => {
-      updateAllDisplayPresetLists();
-      setDisplayPresetInfo(null);
-    });
+async function deletePresetWrapper() {
+  const presetEntry = await load<PresetEntry>({ furadder_custom_presets: [] });
+  const presetId = getDisplaySelectedPreset();
+  const newPresets = presetEntry.furadder_custom_presets.filter(
+    (p) => p.presetId != presetId
+  );
+  presetEntry.furadder_custom_presets = newPresets;
+  await save(presetEntry);
+  await updateAllDisplayPresetLists();
+  await setDisplayPresetInfo(null);
 }
 
 async function updatePreset(
@@ -99,8 +99,14 @@ async function updatePreset(
   dedupedTags.sort();
   existingPreset.tags = dedupedTags;
   await save(customPresets);
-  toggleSaveChangePresetButton(false);
+  toggleChangePresetButtons(false);
   await updateAllDisplayPresetLists();
+}
+
+async function undoPresetChanges(): Promise<void> {
+  setDisplayPresetInfo(null);
+  toggleChangePresetButtons(false);
+  toggleNewPresetButton(true);
 }
 
 function getDisplayDefaultRating(): string {
@@ -193,47 +199,57 @@ function updateDisplayPresetList(
   return !selectorDisabled;
 }
 
-function saveAllOptions() {
+async function saveAllOptions() {
   const data: OptionsData = {
     furadder_default_rating: getDisplayDefaultRating(),
     furadder_default_preset: getDisplayDefaultPreset(),
   };
-  save(data);
+  await save(data);
+  SAVE_OPTIONS_ELEM.disabled = true;
 }
 
 function dirtyPresetInputs() {
-  toggleSaveChangePresetButton(true);
+  toggleChangePresetButtons(true);
   toggleNewPresetButton(true);
   toggleDeletePresetButton(true);
 }
 
-function toggleSaveChangePresetButton(enabled: boolean) {
-  const button = document.querySelector<HTMLButtonElement>("#save-changes")!;
+function dirtyOtherOptions() {
+  SAVE_OPTIONS_ELEM.disabled = false;
+}
+
+function toggleChangePresetButtons(enabled: boolean) {
+  const changeButton =
+    document.querySelector<HTMLButtonElement>("#save-changes")!;
   if (
     SELECTED_PRESET_ELEM.value &&
     PRESET_TAGS_INPUT_ELEM.value &&
     PRESET_NAME_INPUT_ELEM.value
   ) {
-    button.disabled = !enabled;
-  } else {
-    button.disabled = true;
+    changeButton.disabled = !enabled;
+    UNDO_PRESET_CHANGES_BUTTON.disabled = !enabled;
+    return;
   }
+  changeButton.disabled = true;
+  UNDO_PRESET_CHANGES_BUTTON.disabled = true;
 }
+
 function toggleNewPresetButton(enabled: boolean) {
   const button = document.querySelector<HTMLButtonElement>("#new-preset")!;
   if (PRESET_TAGS_INPUT_ELEM.value && PRESET_NAME_INPUT_ELEM.value) {
     button.disabled = !enabled;
-  } else {
-    button.disabled = true;
+    return;
   }
+  button.disabled = true;
 }
+
 function toggleDeletePresetButton(enabled: boolean) {
   const button = document.querySelector<HTMLButtonElement>("#delete-preset")!;
   if (SELECTED_PRESET_ELEM.value) {
     button.disabled = !enabled;
-  } else {
-    button.disabled = true;
+    return;
   }
+  button.disabled = true;
 }
 
 document
@@ -242,21 +258,18 @@ document
 document
   .getElementById("save-changes")!
   .addEventListener("click", updatePresetWrapper);
+UNDO_PRESET_CHANGES_BUTTON.addEventListener("click", undoPresetChanges);
 document
   .getElementById("delete-preset")!
   .addEventListener("click", deletePresetWrapper);
 document
   .getElementById("save-options")!
   .addEventListener("click", saveAllOptions);
-document
-  .getElementById("selected-preset")!
-  .addEventListener("change", setDisplayPresetInfoFromEvent);
-document
-  .getElementById("preset-name-input")!
-  .addEventListener("input", dirtyPresetInputs);
-document
-  .getElementById("preset-tags-input")!
-  .addEventListener("input", dirtyPresetInputs);
+DEFAULT_RATING_ELEM.addEventListener("change", dirtyOtherOptions);
+DEFAULT_PRESET_ELEM.addEventListener("change", dirtyOtherOptions);
+SELECTED_PRESET_ELEM.addEventListener("change", setDisplayPresetInfoFromEvent);
+PRESET_NAME_INPUT_ELEM.addEventListener("input", dirtyPresetInputs);
+PRESET_TAGS_INPUT_ELEM.addEventListener("input", dirtyPresetInputs);
 
 updateAllDisplayPresetLists()
   .then(() => setDisplayPresetInfo(null))

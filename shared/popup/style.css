@@ -27,15 +27,6 @@ body {
   font-size: 9pt;
 }
 
-h1 {
-  color: var(--hi-text-color);
-  background-color: var(--hi1-bg-color);
-  margin: 0;
-  padding: 5px;
-  text-align: center;
-  font-size: 16pt;
-}
-
 button,
 select {
   min-width: inherit;
@@ -62,14 +53,19 @@ select:hover {
 }
 
 button:disabled {
-  cursor: not-allowed;
+  cursor: default;
   background-color: var(--button-disabled-color);
 }
 
 button:disabled,
 select:disabled {
-  cursor: not-allowed;
+  cursor: default;
   background-color: var(--button-disabled-color);
+}
+
+#primary-title {
+  background-color: var(--hi1-bg-color);
+  text-align: center;
 }
 
 #thumb-container {
@@ -117,6 +113,15 @@ select:disabled {
   min-height: 80px;
   max-height: 80px;
   overflow-y: auto;
+}
+
+.title-text {
+  color: var(--hi-text-color);
+  margin: 5px auto 5px auto;
+  text-align: center;
+  font-size: 16pt;
+  font-weight: bold;
+  display: inline-block;
 }
 
 .warning-container-header {
@@ -215,4 +220,20 @@ a.warning-container-url {
   left: 3px;
   font-size: 20pt;
   color: #ffffff;
+}
+
+.shaped-button {
+  width: 25px;
+  height: 25px;
+  margin: 5px;
+  background-image: url("svg/cog.svg");
+  background-size: contain;
+  background-color: transparent;
+  opacity: 70%;
+  float: right;
+}
+
+.shaped-button:hover {
+  background-color: transparent; /* Need to overwrite this again */
+  opacity: 100%;
 }

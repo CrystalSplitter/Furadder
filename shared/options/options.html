@@ -19,20 +19,27 @@
           <label for="selected-preset">Selected Preset</label>
           <br />
           <select id="selected-preset" class="indented"></select>
+          <button id="delete-preset" disabled="">Delete Preset</button>
         </div>
         <div class="section-item">
           <label for="preset-name-input">Preset Name</label><br />
           <input id="preset-name-input" type="text" class="indented" />
         </div>
         <div class="section-item">
-          <label for="preset-tags-input">Preset Tags (Comma Separated)</label>
+          <label for="preset-tags-input">Preset Tags</label>
           <br />
-          <textarea id="preset-tags-input" class="indented"></textarea>
+          <textarea
+            id="preset-tags-input"
+            class="indented"
+            rows="20"
+            ,
+            cols="50"
+          ></textarea>
         </div>
         <div class="section-item">
           <button id="save-changes" disabled="">Save Changes</button>
+          <button id="undo-changes" disabled="">Undo Changes</button>
           <button id="new-preset">Save As New Preset</button>
-          <button id="delete-preset" disabled="">Delete Preset</button>
         </div>
       </div>
       <div class="section default-rating-container">
@@ -49,7 +56,7 @@
         <select id="default-preset" class="section-item"></select>
       </div>
       <div class="section">
-        <button id="save-options">Save Options</button>
+        <button id="save-options" disabled="">Save Options</button>
       </div>
     </div>
     <script type="module" src="../universal_utils/storage.js"></script>

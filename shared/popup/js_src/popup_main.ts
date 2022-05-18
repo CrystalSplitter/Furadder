@@ -34,6 +34,9 @@ const FURBOORU_FETCH_ELEM = document.getElementById(
 const ARTIST_IMAGES_INFO_ELEM = document.getElementById(
   "artist-images-info"
 ) as HTMLElement;
+const SETTINGS_COG_BUTTON = document.getElementById(
+  "settings-cog"
+) as HTMLButtonElement;
 
 const DIRECT_FETCH_TYPE = "direct";
 const GENERAL_FETCH_TYPE = "general";
@@ -323,14 +326,17 @@ function generalButtonSetup(
   promiseMetaProp: MetaProperty,
   postDataProp: PostDataProperty
 ) {
+  SETTINGS_COG_BUTTON.addEventListener("click", () =>
+    browser.runtime.openOptionsPage()
+  );
   updatePresetSelectOptions(
     promiseMetaProp.defaultPreset,
     promiseMetaProp.allPresets
   );
   RATINGS_ELEM.value = promiseMetaProp.defaultRating;
-  POST_FIRST_ELEMENT.addEventListener("click", () => {
-    submit(postDataProp, promiseMetaProp);
-  });
+  POST_FIRST_ELEMENT.addEventListener("click", () =>
+    submit(postDataProp, promiseMetaProp)
+  );
   NEXT_IMAGE_BUTTON.addEventListener("click", () => {
     promiseMetaProp.manualIdx = true;
     if (
@@ -467,7 +473,7 @@ function resetPopUp(
 }
 
 /**
- * @param {.imgItems} promiseMetaProp
+ * @param {MetaProperty} promiseMetaProp
  * @returns The current image object.
  */
 function getActiveImage(promiseMetaProp: MetaProperty): ImageObj | undefined {
