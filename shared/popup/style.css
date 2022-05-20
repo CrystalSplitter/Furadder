@@ -14,8 +14,7 @@
 
 @font-face {
   font-family: "Open Sans";
-  src: url("/fonts/OpenSans-Regular-webfont.woff2") format("woff2"),
-    url("/fonts/OpenSans-Regular-webfont.woff") format("woff");
+  src: url("/fonts/OpenSans-Regular.ttf") format("ttf");
 }
 
 body {
@@ -63,11 +62,6 @@ select:disabled {
   background-color: var(--button-disabled-color);
 }
 
-#primary-title {
-  background-color: var(--hi1-bg-color);
-  text-align: center;
-}
-
 #thumb-container {
   margin: 5px auto 5px auto;
   min-width: var(--thumb-max-width);
@@ -113,6 +107,11 @@ select:disabled {
   min-height: 80px;
   max-height: 80px;
   overflow-y: auto;
+}
+
+.primary-title {
+  background-color: var(--hi1-bg-color);
+  text-align: center;
 }
 
 .title-text {
@@ -226,7 +225,7 @@ a.warning-container-url {
   width: 25px;
   height: 25px;
   margin: 5px;
-  background-image: url("svg/cog.svg");
+  background-image: url("/svg/cog.svg");
   background-size: contain;
   background-color: transparent;
   opacity: 70%;
