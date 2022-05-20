@@ -1,5 +1,3 @@
-"use strict";
-
 const TWITTER_TABLE: { [key: string]: string } = {
   alumx_mlp: "alumx",
   dawnf1re: "dawnfire",

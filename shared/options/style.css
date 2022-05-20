@@ -1,0 +1,32 @@
+body {
+  margin: 0 auto 0 auto;
+  font-size: 11pt;
+}
+
+#page-container {
+  margin: 0 auto 0 15%;
+}
+
+.section {
+  margin: 0 0px 20px 0;
+}
+
+.section-item {
+  margin: 0 0 10px 20px;
+}
+
+.section-item .indented {
+  margin: 0 10px;
+}
+
+#delete-preset:enabled {
+  background-color: #6e2641;
+}
+
+#new-preset {
+  margin-left: 30px;
+}
+
+#new-preset:enabled {
+  background-color: #10834e;
+}

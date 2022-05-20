@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="third_party/browser-polyfill.min.js"></script>
   </head>
-
   <body>
     <div id="background-div">
-      <div id="primary-title">
-        <h1>FurAdder</h1>
+      <div class="primary-title">
+        <span class="title-text">FurAdder</span>
+        <button id="settings-cog" class="shaped-button"></button>
       </div>
       <div class="content-container">
         <div class="content">
@@ -49,15 +49,7 @@
             <div class="dropdown-container-l1 border-box">
               <div class="dropdown-container-l2">
                 Tag Preset:
-                <select name="preset" id="tag-presets">
-                  <option value="none">None</option>
-                  <option value="friendship-is-magic">
-                    Friendship is Magic
-                  </option>
-                  <option value="pokemon">Pokemon</option>
-                  <option value="anthro-oc">Anthro OC</option>
-                  <option value="feral-oc">Feral OC</option>
-                </select>
+                <select name="preset" id="tag-presets"></select>
               </div>
             </div>
             <div class="dropdown-container-l1 border-box">
@@ -79,7 +71,7 @@
         </div>
       </div>
     </div>
-    <script type="module" src="js_src/tag_presets.js"></script>
+    <script type="module" src="../universal_utils/tag_presets.js"></script>
     <script type="module" src="js_src/aliasing.js"></script>
     <script type="module" src="js_src/repost_check.js"></script>
     <script type="module" src="js_src/popup_main.js"></script>

@@ -2,7 +2,7 @@
 
 A [furbooru.org](https://furbooru.org) image extractor and uploader.
 
-![screenshot_v0.3](media/screenshot_v0.3.png)
+![screenshot_v0.6](media/screenshot_v0.6.png)
 
 ## Installation
 
@@ -15,10 +15,13 @@ A [furbooru.org](https://furbooru.org) image extractor and uploader.
 - Autofills the upload and fetch forum on furbooru.org.
 - Extracts artist name (when available) and applies appropriate aliasing.
 - Extracts highest resolution version from the page.
-- Allows tag presets for faster uploading.
+- Allows tag presets for faster tagging.
+- Add custom tag presets, configure defaults!
 - Forces a rating tag so you won't forget.
 - Detects hash-identical reposts before upload.
+- Looks for other art by the same artist before upload.
 - Universal extraction (pull images from any site!).
+- Configurable Keyboard Shortcuts/Hot Keys.
 
 ## Intelligently Supported Sites
 

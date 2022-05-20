@@ -5,28 +5,25 @@
   --hi-text-color: #ffffff;
   --button-default-color: #3a314e;
   --button-hover-color: #2e2744;
+  --button-disabled-color: #27252b;
   --warning-color: #ff904e;
   --url-color: #90fbff;
   --thumb-max-width: 200px;
   --thumb-max-height: 100px;
 }
 
+@font-face {
+  font-family: "Open Sans";
+  src: url("/fonts/OpenSans-Regular.ttf") format("ttf");
+}
+
 body {
-  font-family: "Trebuchet MS", "sans-serif";
+  font-family: "Open Sans", ui-sans-serif, sans-serif;
   color: var(--main-text-color);
   background-color: var(--main-bg-color);
   padding: 0;
   margin: 0;
   font-size: 9pt;
-}
-
-h1 {
-  color: var(--hi-text-color);
-  background-color: var(--hi1-bg-color);
-  margin: 0;
-  padding: 5px;
-  text-align: center;
-  font-size: 16pt;
 }
 
 button,
@@ -49,13 +46,20 @@ select {
   min-height: 16px;
 }
 
-button:disabled {
-  cursor: default;
-}
-
 button:hover,
 select:hover {
   background-color: var(--button-hover-color);
+}
+
+button:disabled {
+  cursor: default;
+  background-color: var(--button-disabled-color);
+}
+
+button:disabled,
+select:disabled {
+  cursor: default;
+  background-color: var(--button-disabled-color);
 }
 
 #thumb-container {
@@ -103,6 +107,20 @@ select:hover {
   min-height: 80px;
   max-height: 80px;
   overflow-y: auto;
+}
+
+.primary-title {
+  background-color: var(--hi1-bg-color);
+  text-align: center;
+}
+
+.title-text {
+  color: var(--hi-text-color);
+  margin: 5px auto 5px auto;
+  text-align: center;
+  font-size: 16pt;
+  font-weight: bold;
+  display: inline-block;
 }
 
 .warning-container-header {
@@ -201,4 +219,20 @@ a.warning-container-url {
   left: 3px;
   font-size: 20pt;
   color: #ffffff;
+}
+
+.shaped-button {
+  width: 25px;
+  height: 25px;
+  margin: 5px;
+  background-image: url("/svg/cog.svg");
+  background-size: contain;
+  background-color: transparent;
+  opacity: 70%;
+  float: right;
+}
+
+.shaped-button:hover {
+  background-color: transparent; /* Need to overwrite this again */
+  opacity: 100%;
 }

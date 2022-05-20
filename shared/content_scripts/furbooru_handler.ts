@@ -115,7 +115,10 @@
       consoleError("Setting fields failed");
       return Promise.resolve({ success: false });
     }
-    return Promise.reject({ isError: true, message: "Unsupported command" });
+    return Promise.reject({
+      isError: true,
+      message: "Unsupported command",
+    });
   }
 
   browser.runtime.onMessage.addListener(listener);
