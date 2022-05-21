@@ -45,6 +45,28 @@
     return `__**${title}**__\n\n${descBody}\n\n_${license}_`;
   }
 
+  function getYear(): number | null {
+    const datetime = document.querySelector("time")?.getAttribute("datetime");
+    if (datetime == null) {
+      consoleError("Could not get <time> tag with datetime attribute");
+      return null;
+    }
+    const year = isoYearFunc(datetime);
+    if (year == null) {
+      consoleError(`datetime ${datetime} was not ISO8601 formatted`);
+      return null;
+    }
+    return year.year;
+  }
+
+  function getTags(): string[] {
+    const year = getYear();
+    if (year != null) {
+      return [year.toString()];
+    }
+    return [];
+  }
+
   /**
    * @param {Node} elem Recurse element target.
    * @returns {string} Collected description.
@@ -100,6 +122,7 @@
             expectedResolutions: expRes == null ? [] : [expRes],
             authors: getArtists(),
             description: getDescription(),
+            extractedTags: getTags(),
           }).resolvePromise();
         case "general":
           consoleDebug("Using general server fetch");
