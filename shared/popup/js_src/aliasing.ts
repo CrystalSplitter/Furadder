@@ -4,6 +4,7 @@ const TWITTER_TABLE: { [key: string]: string } = {
   itssugarmorning: "sugar morning",
   lolliponyart: "lollipony",
   margony7: "margony",
+  margonynfw: "margony",
   selenophilensfw: "selenophile",
   selenophilesfw: "selenophile",
   southpauzart: "southpauz",
