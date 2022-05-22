@@ -57,6 +57,21 @@ function extractData(
   });
 }
 
+/**
+ * Get the resolution related tags for the image.
+ * @param img Image object being posted
+ * @returns An array of new resolution related tags.
+ */
+function resolutionTags(img: ImageObj): string[] {
+  const pixels = img.width * img.height;
+  // No real image has zero pixels, this is an error filter.
+  if (pixels === 0) return [];
+  if (pixels >= 4000 * 4000) return ["absurd resolution"];
+  if (pixels >= 2000 * 2000) return ["high res"];
+  if (pixels <= 500 * 500) return ["low res"];
+  return [];
+}
+
 function displayURL(urlStr: string) {
   const urlObj = new URL(urlStr);
   const elem = document.getElementById(
@@ -257,8 +272,11 @@ function submit(postDataProp: PostDataProperty, promiseMetaProp: MetaProperty) {
   const submissionData = {
     ...postDataProp,
   };
+  const activeImg = getActiveImage(promiseMetaProp);
+  const resTags = activeImg != null ? resolutionTags(activeImg) : [];
   const lowerTags = postDataProp.tags
     .concat(promiseMetaProp.tagPreset)
+    .concat(resTags)
     .map((x) => x.toLowerCase());
   const uniqueTags = Array.from(new Set(lowerTags));
   submissionData.tags = uniqueTags;
