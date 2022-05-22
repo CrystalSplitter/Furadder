@@ -7,6 +7,14 @@ body {
   margin: 0 auto 0 15%;
 }
 
+#love {
+  position: absolute;
+  margin-left: 32px;
+  width: 16px;
+  height: 16px;
+  top: 8px;
+}
+
 .section {
   margin: 0 0px 20px 0;
 }
