@@ -1,6 +1,5 @@
 (() => {
   const SRC_STRING = "https://pbs.twimg.com/media/";
-  const INFO_IDX = 2;
 
   function directTwitterHandler(): ImageObj[] {
     return filterScrapedImages(SRC_STRING).map((x) => {
@@ -67,16 +66,41 @@
       consoleError("Unable to find descriptionContainer.");
       return null;
     }
-    const infoElem = descriptionContainer.children[INFO_IDX];
-    if (infoElem == null) {
-      consoleError("Unable to find infoElem.");
+    const yearString = recurseForDate(descriptionContainer);
+    if (yearString == null) {
+      consoleError("Can't get year string");
       return null;
     }
-    const infoStr = infoElem.textContent;
-    if (infoStr == null) return null;
-    const date = parseDateString(infoStr, lang);
-    if (date == null) return null;
+    const date = parseDateString(yearString, lang);
+    if (date == null) {
+      consoleError("Can't parse date string:", yearString);
+      return null;
+    }
     return date.year;
+  }
+
+  /**
+   * Helper to traverse the description container to search for the date span.
+   * @param elem Element to recurse on.
+   * @returns The date string or null.
+   */
+  function recurseForDate(elem: Element): string | null {
+    if (elem.children.length === 0) {
+      if (elem.nodeName === "SPAN") {
+        if (elem.textContent?.match(/\b20\d\d\b/)) {
+          return elem.textContent;
+        }
+      }
+      return null;
+    }
+    const childrenResults = Array.from(elem.children)
+      .map((child) => {
+        return recurseForDate(child);
+      })
+      .filter((x) => x != null);
+    if (childrenResults.length > 0)
+      return childrenResults[childrenResults.length - 1];
+    return null;
   }
 
   /**
