@@ -2,6 +2,7 @@ const TWITTER_TABLE: { [key: string]: string } = {
   alumx_mlp: "alumx",
   dawnf1re: "dawnfire",
   itssugarmorning: "sugar morning",
+  landypommel: "la-ndy",
   lolliponyart: "lollipony",
   margony7: "margony",
   margonynfw: "margony",
