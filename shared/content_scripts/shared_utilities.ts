@@ -191,3 +191,24 @@ function escapeMarkdown(s: string): string {
     .replaceAll("`", "\\`")
     .replaceAll("]", "\\]");
 }
+
+/**
+ * Fetch with a ms timeout.
+ * @param resource Fetch RequestInfo to pass through.
+ * @param options Fetch options, with an added :timeout: number entry (in ms)
+ * @returns
+ */
+async function fetchWithTimeout(
+  resource: RequestInfo,
+  options: any = {}
+): Promise<Response> {
+  const { timeout = 4000 } = options;
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  const response = await fetch(resource, {
+    ...options,
+    signal: controller.signal,
+  });
+  clearTimeout(id);
+  return response;
+}
