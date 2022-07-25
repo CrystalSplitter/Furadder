@@ -1,6 +1,6 @@
 {
   "name": "furadder",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Allows easy image extraction and uploading to furbooru.org",
   "main": "shared/popup/popup_main.ts",
   "scripts": {
