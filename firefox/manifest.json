@@ -1,5 +1,5 @@
 {
-  "author": "Jordan R A",
+  "author": "Jordan R AW",
   "background": {
     "scripts": [
       "background_scripts/background.js"
@@ -107,7 +107,7 @@
     "storage",
     "tabs"
   ],
-  "version": "1.0.0",
+  "version": "1.1.0",
   "web_accessible_resources": [
     "popup/js_src/*"
   ]
