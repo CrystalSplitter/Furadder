@@ -92,40 +92,15 @@
       );
     }
     consoleDebug("Searching for higher res at:", potentiallyLargerFetchSrc);
-    const loadedPage = await fetchWithTimeout(potentiallyLargerFetchSrc);
-    if (loadedPage != null && loadedPage.ok) {
-      const blob = await loadedPage.blob();
-      // We have to do some weird promise shenanigans here
-      // because these are all using the old callback systems.
-      const reader = new FileReader();
-      const img = new Image();
-      await new Promise((resolve, reject) => {
-        reader.onloadend = (event) => {
-          resolve(event);
-        };
-        reader.onerror = (event) => {
-          reject(event);
-        };
-        reader.readAsDataURL(blob);
-      }).then(() => {
-        return new Promise((resolve, reject) => {
-          img.onload = (event) => {
-            resolve(event);
-          };
-          img.onerror = (event) => {
-            reject(event);
-          };
-          img.src = reader.result as string;
-        });
-      });
-      return newImageObject({
-        src: potentiallyLargerFetchSrc,
-        width: img.naturalWidth,
-        height: img.naturalHeight,
-      });
+    const higherResObj = await fetchImageObjectFromBlobURL(
+      potentiallyLargerFetchSrc,
+      potentiallyLargerFetchSrc
+    );
+    if (higherResObj == null) {
+      consoleDebug("Could not get higher res, falling back");
+      // No need to return null here, higherResObj is null.
     }
-    consoleDebug("Could not get higher res, falling back");
-    return null;
+    return higherResObj;
   }
 
   /**

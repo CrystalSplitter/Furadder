@@ -68,13 +68,22 @@
       ]
     },
     {
+      "js": [
+        "content_scripts/tumblr_handler.js"
+      ],
+      "matches": [
+        "*://*.tumblr.com/*"
+      ]
+    },
+    {
       "exclude_matches": [
         "*://twitter.com/*",
         "*://mobile.twitter.com/*",
         "*://derpibooru.org/*",
         "*://furbooru.org/*",
         "*://www.deviantart.com/*",
-        "*://www.furaffinity.net/*"
+        "*://www.furaffinity.net/*",
+        "*://*.tumblr.com/*"
       ],
       "js": [
         "content_scripts/universal_handler.js"
