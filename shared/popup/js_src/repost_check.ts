@@ -1,19 +1,28 @@
 const JSON_API_BASE = "https://furbooru.org/api/v1/json";
 export const IMAGES_URL = "https://furbooru.org/images/";
+export const EVERYTHING_FILTER_ID = 2;
+
+type ImageResponse = {
+  id: Number;
+};
 
 /**
  * @param {string} queryContent Generic, unescaped query string
  * @returns {Promise<Response>} Fetch promise of the query.
  */
 export async function queryBooru(queryContent: string): Promise<Response> {
-  return fetch(JSON_API_BASE + `/search?q=${queryContent}`);
+  return fetch(
+    `${JSON_API_BASE}/search?q=${queryContent}&filter_id=${EVERYTHING_FILTER_ID}`
+  );
 }
 
 /**
  * @param {string} artist Artist name
- * @returns {Promise<any[]>} Promise of every image by the artist.
+ * @returns {Promise<ImageResponse[]>} Promise of every image by the artist.
  */
-export async function getImagesByArtists(artists: string[]): Promise<any[]> {
+export async function getImagesByArtists(
+  artists: string[]
+): Promise<ImageResponse[]> {
   if (artists.length == 0) {
     return [];
   }
@@ -31,10 +40,12 @@ export async function getImagesByArtists(artists: string[]): Promise<any[]> {
 /**
  * Return the Booru URL if this is a repost, otherwise return null.
  * @param {string} url Target of a potential repost
- * @returns {Promise<any | null>} Promise which contains the first
+ * @returns {Promise<ImageResponse | null>} Promise which contains the first
  * matching repost image, or null.
  */
-export async function getPotentialRepost(url: string) {
+export async function getPotentialRepost(
+  url: string
+): Promise<ImageResponse | null> {
   return sha512FromUrl(url)
     .catch((e: any) => {
       console.error(`Failed to make sha512sum for ${url}`, e);
@@ -73,7 +84,9 @@ async function sha512Sum(arrayBuffer: ArrayBuffer): Promise<Sha512Hash> {
   });
 }
 
-async function getPotentialRepostFromHash(hash: Sha512Hash): Promise<any> {
+async function getPotentialRepostFromHash(
+  hash: Sha512Hash
+): Promise<ImageResponse | null> {
   return queryBooru(`orig_sha512_hash:${hash}+||+sha512_hash:${hash}`)
     .then((resp) => resp.json())
     .then((json) => {
