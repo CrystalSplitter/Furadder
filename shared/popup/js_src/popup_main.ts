@@ -164,6 +164,9 @@ function dispatchWarnings(resp: Feedback, promiseMetaProp: MetaProperty) {
       "Some info may be missing or incorrect."
     );
     ok = false;
+  } else if (resp.listenerType == "tumblr") {
+    addTextWarning("Tumblr Extractor", "Use permalinks. Info may be missing.");
+    ok = false;
   }
 
   let hasRes = false;
