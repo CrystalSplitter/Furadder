@@ -39,7 +39,7 @@ interface PostDataProperty {
   autoquote: boolean;
   description: string;
   fetchURLStr: string;
-  sourceURLStr: string;
+  sourceURLStrs: string[];
   tags: string[];
 }
 

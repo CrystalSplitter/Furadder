@@ -16,16 +16,47 @@
   }
 
   /**
-   * Set the source string on the submission page.
-   * @param urlStr The source string to set.
+   * Add a new source field entry on the booru submission page.
+   * @returns Whether or not a new source was added.
    */
-  function setSourceURL(urlStr: string): boolean {
-    const elem = document.getElementById("image_source_url");
-    if (elem == null || !(elem instanceof HTMLInputElement)) {
-      consoleError("Unable to set image_source_url");
+  function addNewSourceField(): boolean {
+    const button = document.querySelector(".js-image-add-source");
+    if (button != null && button instanceof HTMLButtonElement) {
+      button.click();
+      return true;
+    }
+    consoleError("Unable to add new source");
+    return false;
+  }
+
+  /**
+   * Set the source string on the submission page.
+   * @param urlStrs The source string to set.
+   */
+  function setSourceURLs(urlStrs: string[]): boolean {
+    for (let i = 0; i < urlStrs.length - 1; i++) {
+      if (!addNewSourceField()) {
+        return false;
+      }
+    }
+    const sourceInputs = document.querySelectorAll(
+      ".js-image-source .js-source-url"
+    );
+    if (sourceInputs.length !== urlStrs.length) {
+      consoleError(
+        `sourceInputs had length ${sourceInputs.length}, but expected ${urlStrs.length}`
+      );
       return false;
     }
-    elem.value = urlStr;
+    for (let i = 0; i < urlStrs.length; i++) {
+      const urlStr = urlStrs[i];
+      const inputField = sourceInputs[i];
+      if (inputField instanceof HTMLInputElement) {
+        inputField.value = urlStr;
+      } else {
+        consoleError("Expected ", inputField, " to be an HTMLInputElement");
+      }
+    }
     return true;
   }
 
@@ -95,9 +126,9 @@
   ): Promise<{ success: boolean } | { isError: boolean; message: string }> {
     if (request.command === "contentFurbooruFetch") {
       const setFetchSuccess = setFetchURL(request.data.fetchURLStr);
-      consoleDebug("Set fetch field success?", setFetchSuccess);
-      const setSourceSuccess = setSourceURL(request.data.sourceURLStr);
-      consoleDebug("Set source field success?", setSourceSuccess);
+      consoleDebug("Set fetch field?", setFetchSuccess);
+      const setSourceSuccess = setSourceURLs(request.data.sourceURLStrs);
+      consoleDebug("Set source field?", setSourceSuccess);
       const setDescSuccess = setDescription(
         request.data.description,
         request.data.autoquote
@@ -112,7 +143,7 @@
         consoleDebug("Submission completed successfully?", finalSuccess);
         return Promise.resolve({ success: finalSuccess });
       }
-      consoleError("Setting fields failed");
+      consoleError("Setting fields failed; didn't bother fetching");
       return Promise.resolve({ success: false });
     }
     return Promise.reject({
