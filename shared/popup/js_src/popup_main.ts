@@ -471,10 +471,7 @@ function resetPopUp(
             postDataProp.tags = postDataProp.tags.concat(resp.extractedTags);
           }
           postDataProp.description = resp.description;
-
-          // TODO: We may need to support multiple source URLs
-          // later. But right now, we just choose the first one.
-          postDataProp.sourceURLStr = resp.sourceLinks?.[0] ?? "";
+          postDataProp.sourceURLStrs = resp.sourceLinks;
           postDataProp.autoquote = resp.autoquote;
 
           if (promiseMetaProp.imgItems.length > 0) {
@@ -518,7 +515,7 @@ function main() {
     // We do use them in callback captures.
     const postDataProp: PostDataProperty = {
       fetchURLStr: "",
-      sourceURLStr: "",
+      sourceURLStrs: [],
       description: "",
       tags: [],
       autoquote: false,

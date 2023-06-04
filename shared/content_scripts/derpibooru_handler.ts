@@ -1,15 +1,34 @@
 (() => {
   // const VIEW_PATH = "https://derpicdn.net/img/view";
   const TAG_LIST = document.querySelector(".tag-list");
+  const RES_REGEX = /(\d+)x(\d+).*/;
 
   function derpibooruHandler(): ImageObj[] {
     const imgSrc = getViewURL();
+    const imgSize = getImageSize();
     return [
       newImageObject({
         src: imgSrc,
-        lazyLoad: true,
+        width: imgSize?.width,
+        height: imgSize?.height,
       }),
     ];
+  }
+
+  function getImageSize(): Resolution | null {
+    const sizeElem = document.querySelector<HTMLSpanElement>(".image-size");
+    const match = sizeElem?.textContent?.trim().match(RES_REGEX);
+    if (match == null) {
+      consoleDebug("Could not find matching image-size element");
+      return null;
+    }
+    const width = match[1];
+    const height = match[2];
+    if (width == null || height == null) {
+      consoleDebug("Could not get width or height for image");
+      return null;
+    }
+    return { width: parseInt(width), height: parseInt(height) };
   }
 
   /**
@@ -30,15 +49,6 @@
    * @returns {string[]} Source URLs.
    */
   function getSourceLinks(): string[] {
-    // Old selector, before 2023 UI update.
-    // Originally, Philomena boorus could only
-    // display one source. With recent updates,
-    // they can display multiple.
-
-    //const src = document.querySelector(
-    //  "#image-source > p > a.js-source-link"
-    //)?.textContent;
-
     const srcs = Array.from(
       document.querySelectorAll(".image_sources .image_source__link")
     )
@@ -64,7 +74,6 @@
 
   /**
    * Return the list of artist names.
-   *
    */
   function getArtists(): string[] {
     if (TAG_LIST == null) {
@@ -95,12 +104,16 @@
    * Return the extracted description.
    */
   function getDescription(): string {
-    // Old selector (before 2023 UI update on Derpibooru)
-    // const descElem = document.querySelector(".image-description__text");
     const descElem = document.querySelector(
       ".image-description .block__content"
     );
-    return descrRecHelper(descElem);
+    const desc = descrRecHelper(descElem);
+    // An empty description actually displays the below, so filter that
+    // out explicitly.
+    if (desc === "*No description provided.*") {
+      return "";
+    }
+    return desc;
   }
 
   /**
