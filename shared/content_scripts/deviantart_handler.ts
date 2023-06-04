@@ -218,7 +218,7 @@
           return new Feedback({
             listenerType: "deviantart",
             images: imgObjs,
-            sourceLink: document.location.href,
+            sourceLinks: [document.location.href],
             expectedResolutions: expRes == null ? [] : [expRes],
             authors: getArtists(),
             description: getDescription(),

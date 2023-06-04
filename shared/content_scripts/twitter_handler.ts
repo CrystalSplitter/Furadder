@@ -159,7 +159,7 @@
             images: directTwitterHandler(),
             authors: [getTwitterHandle()],
             description: getDescription(),
-            sourceLink: document.location.href,
+            sourceLinks: [document.location.href],
             expectedIdx: getImgIdx(data.urlStr),
             extractedTags: getTags(),
           }).resolvePromise();

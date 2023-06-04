@@ -130,7 +130,7 @@
           return new Feedback({
             listenerType: "tumblr",
             images: imgObjs,
-            sourceLink: document.location.href,
+            sourceLinks: [document.location.href],
             authors: getArtists(),
             description: getDescription(),
             extractedTags: getTags(),

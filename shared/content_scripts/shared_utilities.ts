@@ -5,7 +5,7 @@ class Feedback {
   listenerType: string;
   images: ImageObj[];
   description: string;
-  sourceLink: string;
+  sourceLinks: string[];
   expectedIdx: number;
   extractedTags: string[];
   expectedResolutions: Resolution[];
@@ -19,7 +19,7 @@ class Feedback {
     this.listenerType = args.listenerType;
     this.images = args.images ?? [];
     this.description = args.description ?? "";
-    this.sourceLink = args.sourceLink ?? "";
+    this.sourceLinks = args.sourceLinks ?? [];
     this.expectedIdx = args.expectedIdx ?? 0;
     this.extractedTags = args.extractedTags ?? [];
     this.expectedResolutions = args.expectedResolutions ?? [];

@@ -10,7 +10,7 @@
           return new Feedback({
             listenerType: "universal",
             images: genericImageExtractor(false),
-            sourceLink: document.location.href,
+            sourceLinks: [document.location.href],
           }).resolvePromise();
         case "general":
           consoleDebug("Using general server fetch");
