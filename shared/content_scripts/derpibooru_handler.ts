@@ -25,17 +25,29 @@
   }
 
   /**
-   * Return the source link provided.
-   * @returns {string} Source URL.
+   * Return the source links provided.
+   *
+   * @returns {string[]} Source URLs.
    */
-  function getSourceLink(): string {
-    const src = document.querySelector(
-      "#image-source > p > a.js-source-link"
-    )?.textContent;
-    if (src == null) {
-      return document.location.href;
+  function getSourceLinks(): string[] {
+    // Old selector, before 2023 UI update.
+    // Originally, Philomena boorus could only
+    // display one source. With recent updates,
+    // they can display multiple.
+
+    //const src = document.querySelector(
+    //  "#image-source > p > a.js-source-link"
+    //)?.textContent;
+
+    const srcs = Array.from(
+      document.querySelectorAll(".image_sources .image_source__link")
+    )
+      .map((x) => x.textContent)
+      .filter((x): x is string => x != null);
+    if (srcs == null || srcs.length === 0) {
+      return [document.location.href];
     }
-    return src;
+    return srcs;
   }
 
   /**
@@ -52,6 +64,7 @@
 
   /**
    * Return the list of artist names.
+   *
    */
   function getArtists(): string[] {
     if (TAG_LIST == null) {
@@ -82,7 +95,11 @@
    * Return the extracted description.
    */
   function getDescription(): string {
-    const descElem = document.querySelector(".image-description__text");
+    // Old selector (before 2023 UI update on Derpibooru)
+    // const descElem = document.querySelector(".image-description__text");
+    const descElem = document.querySelector(
+      ".image-description .block__content"
+    );
     return descrRecHelper(descElem);
   }
 
@@ -161,7 +178,7 @@
             images: derpibooruHandler(),
             authors: artists,
             description: getDescription(),
-            sourceLink: getSourceLink(),
+            sourceLinks: getSourceLinks(),
             extractedTags: transformDerpiTags(getDerpiTags()),
             autoquote: false,
           }).resolvePromise();

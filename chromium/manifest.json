@@ -9,10 +9,10 @@
   },
   "commands": {
     "open-popup": {
+      "description": "Open FurAdder Pop-Up",
       "suggested_key": {
         "default": "Ctrl+Shift+F"
-      },
-      "description": "Open FurAdder Pop-Up"
+      }
     }
   },
   "content_scripts": [
@@ -68,13 +68,22 @@
       ]
     },
     {
+      "js": [
+        "content_scripts/tumblr_handler.js"
+      ],
+      "matches": [
+        "*://*.tumblr.com/*"
+      ]
+    },
+    {
       "exclude_matches": [
         "*://twitter.com/*",
         "*://mobile.twitter.com/*",
         "*://derpibooru.org/*",
         "*://furbooru.org/*",
         "*://www.deviantart.com/*",
-        "*://www.furaffinity.net/*"
+        "*://www.furaffinity.net/*",
+        "*://*.tumblr.com/*"
       ],
       "js": [
         "content_scripts/universal_handler.js"
@@ -97,7 +106,7 @@
     "storage",
     "tabs"
   ],
-  "version": "1.1.0",
+  "version": "1.2.0",
   "web_accessible_resources": [
     {
       "matches": [

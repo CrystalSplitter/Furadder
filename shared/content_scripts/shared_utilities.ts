@@ -5,7 +5,7 @@ class Feedback {
   listenerType: string;
   images: ImageObj[];
   description: string;
-  sourceLink: string;
+  sourceLinks: string[];
   expectedIdx: number;
   extractedTags: string[];
   expectedResolutions: Resolution[];
@@ -19,7 +19,7 @@ class Feedback {
     this.listenerType = args.listenerType;
     this.images = args.images ?? [];
     this.description = args.description ?? "";
-    this.sourceLink = args.sourceLink ?? "";
+    this.sourceLinks = args.sourceLinks ?? [];
     this.expectedIdx = args.expectedIdx ?? 0;
     this.extractedTags = args.extractedTags ?? [];
     this.expectedResolutions = args.expectedResolutions ?? [];
@@ -196,7 +196,7 @@ function escapeMarkdown(s: string): string {
  * Fetch with a ms timeout.
  * @param resource Fetch RequestInfo to pass through.
  * @param options Fetch options, with an added :timeout: number entry (in ms)
- * @returns
+ * @returns The response
  */
 async function fetchWithTimeout(
   resource: RequestInfo,
@@ -211,4 +211,44 @@ async function fetchWithTimeout(
   });
   clearTimeout(id);
   return response;
+}
+
+async function fetchImageObjectFromBlobURL(
+  resource: RequestInfo,
+  responseSrc: string,
+  options: any = {}
+): Promise<ImageObj | null> {
+  const loadedPage = await fetchWithTimeout(resource, options);
+  if (loadedPage != null && loadedPage.ok) {
+    const blob = await loadedPage.blob();
+    // We have to do some weird promise shenanigans here
+    // because these are all using the old callback systems.
+    const reader = new FileReader();
+    const img = new Image();
+    await new Promise((resolve, reject) => {
+      reader.onloadend = (event) => {
+        resolve(event);
+      };
+      reader.onerror = (event) => {
+        reject(event);
+      };
+      reader.readAsDataURL(blob);
+    }).then(() => {
+      return new Promise((resolve, reject) => {
+        img.onload = (event) => {
+          resolve(event);
+        };
+        img.onerror = (event) => {
+          reject(event);
+        };
+        img.src = reader.result as string;
+      });
+    });
+    return newImageObject({
+      src: responseSrc,
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+    });
+  }
+  return null;
 }

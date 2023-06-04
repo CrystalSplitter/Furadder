@@ -79,7 +79,7 @@
           return new Feedback({
             listenerType: "furaffinity",
             images: imgObjs,
-            sourceLink: document.location.href,
+            sourceLinks: [document.location.href],
             expectedResolutions: getExpectedRes(),
             authors: getArtists(),
             description: getDescription(),

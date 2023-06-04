@@ -132,6 +132,10 @@ function displayUnknownRes() {
   RESOLUTION_ELEM.textContent = "???px \u00D7 ???px";
 }
 
+/**
+ * Update the pop-up's image display.
+ * @param imgItem Display this object
+ */
 function updateImageDisplay(imgItem: ImageObj) {
   displaySelectedImg(imgItem);
   if (imgItem.lazyLoad) {
@@ -163,6 +167,9 @@ function dispatchWarnings(resp: Feedback, promiseMetaProp: MetaProperty) {
       "Universal Extractor",
       "Some info may be missing or incorrect."
     );
+    ok = false;
+  } else if (resp.listenerType == "tumblr") {
+    addTextWarning("Tumblr Extractor", "Use permalinks. Info may be missing.");
     ok = false;
   }
 
@@ -464,7 +471,10 @@ function resetPopUp(
             postDataProp.tags = postDataProp.tags.concat(resp.extractedTags);
           }
           postDataProp.description = resp.description;
-          postDataProp.sourceURLStr = resp.sourceLink;
+
+          // TODO: We may need to support multiple source URLs
+          // later. But right now, we just choose the first one.
+          postDataProp.sourceURLStr = resp.sourceLinks?.[0] ?? "";
           postDataProp.autoquote = resp.autoquote;
 
           if (promiseMetaProp.imgItems.length > 0) {

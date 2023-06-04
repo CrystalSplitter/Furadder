@@ -34,6 +34,9 @@ function promiseTimeout<T>(ms: number, promise: Promise<T>): Promise<unknown> {
  * Fill the booru submission page with relevant info.
  * If it fails to fill the submission, it will try again
  * until it's tried MAX_FILL_RETRIES number of times.
+ *
+ * @param {number} tabId Browser tab ID with the booru open.
+ * @param {T} postData Data object passed along with the message.
  */
 function booruFill<T>(tabId: number, postData: T) {
   const contentMsg = {
