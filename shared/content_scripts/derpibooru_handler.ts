@@ -53,9 +53,11 @@
       document.querySelectorAll(".image_sources .image_source__link")
     )
       .map((x) => x.textContent)
+      .map((x) => (x?.includes("not provided yet") ? null : x))
       .filter((x): x is string => x != null);
     if (srcs == null || srcs.length === 0) {
-      return [document.location.href];
+      const hrefBefore = document.location.href.split("?");
+      return [hrefBefore[0]];
     }
     return srcs;
   }
