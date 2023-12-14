@@ -10,6 +10,7 @@
   --url-color: #90fbff;
   --thumb-max-width: 200px;
   --thumb-max-height: 100px;
+  --popup-min-width: 280px;
 }
 
 @font-face {
@@ -24,6 +25,7 @@ body {
   padding: 0;
   margin: 0;
   font-size: 9pt;
+  min-width: var(--popup-min-width);
 }
 
 button,

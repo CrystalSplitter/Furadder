@@ -8,8 +8,8 @@ die() {
 }
 
 transpile() {
-  tsc -p "${TARGET_DIR}/firefox/tsconfig.json"
-  tsc -p "${TARGET_DIR}/chromium/tsconfig.json"
+  npx tsc -p "${TARGET_DIR}/firefox/tsconfig.json"
+  npx tsc -p "${TARGET_DIR}/chromium/tsconfig.json"
 }
 
 build_firefox_addon() {
