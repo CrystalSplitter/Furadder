@@ -152,8 +152,8 @@ function clearRes() {
 /**
  * Handle any promise errors.
  */
-function handleError(e: any) {
-  console.error("Encountered a promise error:", e);
+function handleError(e: any, ...args: any) {
+  console.error("Encountered a promise error:", e, ...args);
 }
 
 /**
@@ -490,7 +490,7 @@ function resetPopUp(
           });
         })
         .catch((e) => {
-          handleError(e);
+          handleError(e, "'extractData'-thenable failed");
           failureCleanup(promiseMetaProp, postDataProp);
         });
     })
